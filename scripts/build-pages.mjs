@@ -1,6 +1,6 @@
 import { spawnSync } from 'node:child_process';
-import { copyFileSync, existsSync, readFileSync, writeFileSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import assert from 'node:assert/strict';
 
@@ -18,9 +18,10 @@ if (result.status !== 0) process.exit(result.status ?? 1);
 }
 
 const output = resolve(root, 'dist/client');
-// Only these public data and icon files are needed by the viewer.
+// Only these public data, artwork, and icon files are needed by the viewer.
 // The original floor-plan documents stay outside the public site.
-for (const file of ['measurements.json', 'home-icon.svg']) {
+for (const file of ['measurements.json', 'home-icon.svg', 'artwork/botanical-pair.jpg']) {
+  mkdirSync(dirname(resolve(output, file)), {recursive: true});
   copyFileSync(resolve(root, 'public', file), resolve(output, file));
 }
 assert.ok(!existsSync(resolve(output, 'plans')), 'The original plan documents are excluded.');

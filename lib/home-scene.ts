@@ -5,6 +5,7 @@ import {buildHome} from './build-home';
 import {canOccupy} from './navigation';
 import {rooms} from './plan';
 import {WalkInput} from './walk-input';
+import {sitePath} from './site-path';
 
 export class HomeScene{
  renderer:T.WebGLRenderer;scene=new T.Scene();camera=new T.PerspectiveCamera(40,1,.035,180);controls:OrbitControls;home:ReturnType<typeof buildHome>;
@@ -15,7 +16,8 @@ export class HomeScene{
   this.scene.background=new T.Color('#e9e9e1');this.scene.fog=new T.Fog('#e9e9e1',48,120);
   const pmrem=new T.PMREMGenerator(this.renderer),environmentScene=new RoomEnvironment();this.environment=pmrem.fromScene(environmentScene,.04);this.scene.environment=this.environment.texture;this.scene.environmentIntensity=.32;environmentScene.dispose();pmrem.dispose();
   this.scene.add(this.ambient,this.sun);this.sun.position.set(-9,15,1);this.sun.target.position.set(6,0,5);this.scene.add(this.sun.target);this.sun.castShadow=true;this.sun.shadow.mapSize.set(2048,2048);Object.assign(this.sun.shadow.camera,{left:-16,right:16,top:16,bottom:-16,near:.5,far:55});this.sun.shadow.bias=-.0003;this.sun.shadow.normalBias=.028;this.sun.shadow.radius=3;
-  this.home=buildHome();this.scene.add(this.home.root);this.home.lights.forEach(l=>l.intensity=1.2);
+  const artwork=new T.TextureLoader().load(sitePath('/artwork/botanical-pair.jpg'));artwork.colorSpace=T.SRGBColorSpace;
+  this.home=buildHome(artwork);this.scene.add(this.home.root);this.home.lights.forEach(l=>l.intensity=1.2);
   this.ground=new T.Mesh(new T.PlaneGeometry(300,300),new T.MeshStandardMaterial({color:'#e0e1d7',roughness:1}));this.ground.rotation.x=-Math.PI/2;this.ground.position.set(7,-.24,5);this.ground.receiveShadow=true;this.scene.add(this.ground);
   this.camera.position.set(23,23,27);this.camera.aspect=Math.max(1,host.clientWidth)/Math.max(1,host.clientHeight);this.camera.updateProjectionMatrix();this.controls=new OrbitControls(this.camera,this.renderer.domElement);this.controls.target.set(7.1,0,4.7);this.controls.enableDamping=true;this.controls.dampingFactor=.075;this.controls.minDistance=7;this.controls.maxDistance=55;this.controls.maxPolarAngle=Math.PI*.47;this.controls.minPolarAngle=.06;this.controls.screenSpacePanning=true;this.controls.update();
   this.controls.maxDistance=140;this.controls.touches.TWO=T.TOUCH.DOLLY_PAN;this.setMode('overview');

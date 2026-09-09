@@ -44,14 +44,25 @@ export function verifyDimensions(home, canOccupy) {
   for (const [x,z] of [[7.9,3.4],[8.4,.4],[10.5,3.85],[2.4,9.75],[4.6,9.75]]) {
     if (!walls.some(o => o.name === 'Service shaft' && Math.abs(o.x-x)<o.w/2 && Math.abs(o.z-z)<o.d/2)) failures.push(`Missing service shaft at ${x}, ${z}`);
   }
-  const southChairs = home.obstacles.filter(o => o.name === 'Chair' && o.x>10 && o.x<13 && o.z>6.5 && o.z<7.6);
+  const southChairs = home.obstacles.filter(o => o.name === 'Dining chair' && o.z>6.5);
   const southAisle = 8 - Math.max(...southChairs.map(o => o.z+o.d/2));
-  if (southChairs.length !== 3 || southAisle < .75) failures.push(`Dining south aisle: ${southAisle.toFixed(2)} m; needs at least 0.75 m in this layout`);
+  if (southChairs.length !== 2 || southAisle < .75) failures.push(`Dining south aisle: ${southAisle.toFixed(2)} m; needs at least 0.75 m in this layout`);
+  const northChairs = home.obstacles.filter(o => o.name === 'Dining chair' && o.z<6);
+  const counter = home.obstacles.find(o => o.name === 'Kitchen counter');
+  const kitchenWorkAisle = Math.min(...northChairs.map(o=>o.z-o.d/2))-(counter.z+counter.d/2);
+  if (northChairs.length!==2 || kitchenWorkAisle<.90) failures.push('The kitchen work aisle needs at least 0.90 m');
+  const cornerSofa=home.obstacles.find(o=>o.name==='Sofa'&&o.x>8.25);
+  const endChair=home.obstacles.find(o=>o.name==='Dining chair'&&o.x>11.5);
+  const diningSofaGap=cornerSofa ? cornerSofa.z-cornerSofa.d/2-(endChair.z+endChair.d/2) : 0;
+  if (diningSofaGap<.50) failures.push('The dining end chair needs at least 0.50 m to the sofa');
+  for (const pot of home.obstacles.filter(o=>o.name==='Plant pot')) for (const sofa of home.obstacles.filter(o=>o.name==='Sofa')) {
+    if (Math.abs(pot.x-sofa.x)<(pot.w+sofa.w)/2 && Math.abs(pot.z-sofa.z)<(pot.d+sofa.d)/2) failures.push('A plant pot intersects a sofa');
+  }
   for (const f of home.obstacles.filter(o => o.furniture)) for (const wall of walls) {
     const overlapX = Math.min(f.x+f.w/2,wall.x+wall.w/2)-Math.max(f.x-f.w/2,wall.x-wall.w/2);
     const overlapZ = Math.min(f.z+f.d/2,wall.z+wall.d/2)-Math.max(f.z-f.d/2,wall.z-wall.d/2);
     if (overlapX>.01 && overlapZ>.01) failures.push(`${f.name} intersects ${wall.name} at ${f.x}, ${f.z}`);
   }
   assert.deepEqual(failures, [], 'Plan dimensions and furniture clearances');
-  return {measurements, diningSouthAisle:southAisle};
+  return {measurements, diningSouthAisle:southAisle, kitchenWorkAisle, diningSofaGap};
 }

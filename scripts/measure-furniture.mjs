@@ -17,7 +17,7 @@ export function measureFurniture(home) {
       o.geometry.computeBoundingBox();
       local.union(o.geometry.boundingBox.clone().applyMatrix4(new T.Matrix4().multiplyMatrices(inverse, o.matrixWorld)));
     });
-    const world = new T.Box3().setFromObject(group, true), size = local.getSize(new T.Vector3());
+    const world = new T.Box3().setFromObject(group, true), size = local.getSize(new T.Vector3()).multiply(group.getWorldScale(new T.Vector3()));
     const row = {name:obstacle.name,x:group.position.x,z:group.position.z,width:round(size.x),depth:round(size.z),min:world.min.toArray().map(round),max:world.max.toArray().map(round)};
     result.push(row);
     // Foliage and lamp shades extend beyond their floor contact area.

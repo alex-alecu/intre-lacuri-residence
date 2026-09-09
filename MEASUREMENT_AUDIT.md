@@ -49,13 +49,19 @@ The PDFs do not specify the new furniture sizes. These sizes are design choices.
 
 | Item | Size or change |
 | --- | --- |
-| Living sofa | 3.15 × 0.955 m visible bounds; retained |
-| Dining table | 2.80 × 1.10 m; retained, moved north by 0.22 m |
-| Dining chairs | 0.50 × 0.505 m each; all eight retained and placed closer to the table |
-| South dining aisle | Movement-bound clearance increased from 0.51 to 0.85 m; visible chair-back clearance is about 0.88 m |
+| Living sofa | 3.15 × 0.96 m visible bounds; sage fabric; moved to leave space for two armchairs |
+| Dining table | 1.90 × 0.90 m; reduced from 2.80 × 1.10 m for the reference design |
+| Dining chairs | 0.50 × 0.505 m each; six chairs in the new layout |
+| South dining aisle | 0.83 m with the chairs in their shown positions |
+| Dining corner sofa | 1.80 × 0.826 m visible bounds; 0.86 m movement depth; placed against the south wall |
+| Kitchen work aisle | 0.96 m from the counter to the north chair backs |
+| Dining chair to sofa | 0.545 m between the movement bounds |
+| Living coffee table | Oval wood table, 1.30 × 0.62 m |
+| Living armchairs | Two cream chairs, about 0.86 × 0.855 m each |
+| Reading tent | 0.92 × 0.92 m floor bounds; about 1.55 m high |
 | Main bed | 1.80 × 2.10 m mattress; full frame about 1.98 × 2.265 m; retained |
 | Guest bed | 1.40 × 2.00 m mattress; full frame about 1.58 × 2.165 m; retained |
-| Child bed | 0.95 × 1.85 m mattress; full frame about 1.13 × 2.015 m; retained |
+| Child bed | 0.95 × 1.85 m mattress; full frame about 1.133 × 2.015 m; new house frame to 2.143 m high |
 | Main wardrobe | Moved to the west wall; 2.40 m wide, 0.60 m body depth, about 0.646 m with handles |
 | Guest wardrobe | 2.42 m wide, about 0.646 m with handles; retained |
 | Living office desk | 1.50 × 0.68 m; retained |
@@ -68,6 +74,12 @@ The PDFs do not specify the new furniture sizes. These sizes are design choices.
 
 The aisle values apply to the chair positions shown. They do not describe clearance with the chairs pulled out. Plant leaves and lamp shades can extend past their floor contact bounds. Bed movement bounds now include the full headboard.
 
+## Reference design update
+
+The three supplied room photos guide the furniture, colours, and finishes. The dining room has a six-seat wood table, a woven cabinet, blue glass lights, and a second sofa. The west living room has sage and cream seating, an oval wood table, botanical prints, and a fabric pendant. The TV and its stone wall panel are removed. The child room uses a house bed, cloud lights, low toy storage, a small reading tent, and cream and pale pink fabric.
+
+All checked walls, columns, shafts, openings, and room dimensions remain in the same positions. Both office desks remain. The generated furniture dimensions include local object scale.
+
 ## Source differences and limits
 
 - The child-room depth is **3.00 m** in A07 and **3.05 m** in the apartment PDF. The model retains 3.00 m. The 12.00 m² label and A07 drawing support this value. A site measurement is still needed to settle the difference.
@@ -79,7 +91,7 @@ The aisle values apply to the chair positions shown. They do not describe cleara
 
 ## Verification
 
-`npm run test:model` checks 18 wall-face dimensions, six column sections, five service shafts, furniture-to-wall and furniture-to-door intersections, 45 furniture mesh groups, and 26 reachable positions. It checks all four balcony openings. It also checks the eight dining chairs and both office desks. The movement grid is 0.08 m, with a player radius of 0.19 m.
+`npm run test:model` checks 18 wall-face dimensions, six column sections, five service shafts, furniture-to-wall and furniture-to-door intersections, 50 furniture mesh groups, and 33 reachable positions. It checks all four balcony openings. It also checks the six dining chairs and both office desks. The movement grid is 0.08 m, with a player radius of 0.19 m.
 
 The generated `public/measurements.json` contains the source mapping, differences, corrected dimensions, and furniture inventory. The temporary model report also contains each furniture group's visible bounds. A plan diagram made from the generated geometry was inspected against the PDF plans.
 
