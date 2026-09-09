@@ -59,6 +59,7 @@ The PDFs do not specify the new furniture sizes. These sizes are design choices.
 | Dining coffee table | Oval wood table, 0.50 m east–west × 0.70 m north–south; gaps of 0.43 m and 0.45 m to the sofa wings |
 | Dining sideboard | Reduced to 0.30 m overall depth to keep the rear dining passage clear |
 | Hall coat wardrobe | 1.80 m wide × 0.42 m deep; sliding fronts; leaves 0.86 m clear within the hall |
+| Small hall wardrobe | 1.00 m wide × 0.60 m deep × 2.40 m high; sliding fronts; west wall beside the east bathroom; leaves a 1.33 m passage and 0.05 m at each end |
 | Living coffee table | Oval wood table, 1.30 × 0.62 m |
 | Living armchairs | Two cream chairs, about 0.86 × 0.855 m each |
 | Reading tent | 0.92 × 0.92 m floor bounds; about 1.55 m high |
@@ -94,7 +95,7 @@ All checked walls, columns, shafts, openings, and room dimensions remain in the 
 
 ## Verification
 
-`npm run test:model` checks 18 wall-face dimensions, six column sections, five service shafts, furniture-to-wall and furniture-to-door intersections, 51 furniture mesh groups, and 39 reachable positions. It checks all four balcony openings. It also checks the six dining chairs and both office desks. The movement grid is 0.08 m, with a player radius of 0.19 m.
+`npm run test:model` checks 18 wall-face dimensions, six column sections, five service shafts, furniture-to-wall and furniture-to-door intersections, 52 furniture mesh groups, and 40 reachable positions. It checks all four balcony openings. It also checks the six dining chairs and both office desks. The movement grid is 0.08 m, with a player radius of 0.19 m.
 
 The generated `public/measurements.json` contains the source mapping, differences, corrected dimensions, and furniture inventory. The temporary model report also contains each furniture group's visible bounds. A plan diagram made from the generated geometry was inspected against the PDF plans.
 

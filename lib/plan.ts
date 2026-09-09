@@ -10,7 +10,7 @@ export const rooms = [
  {id:'hall-left',name:'Holul de vest',side:'ARIPA DE VEST',area:2.57,x:5,z:8.125,w:1.45,d:1.775,measurement:'1.45 m clear width',primary:false,detail:'',description:'',visit:[5.65,9.1]},
  {id:'hall-right',name:'Holul de est',side:'ARIPA DE EST',area:4.72,x:6.70,z:5.825,w:1.3,d:4.075,measurement:'1.30 × 4.075 m',primary:false,detail:'Haine și încălțăminte',description:'Dulap pentru paltoane și jachete, cu uși glisante și sertare pentru încălțăminte.',visit:[7.35,9.1]},
  {id:'hall-west-north',name:'Holul camerelor de vest',side:'ARIPA DE VEST',area:3.01,x:4,z:3.125,w:2.075,d:1.575,measurement:'Open hall; area from source label',primary:false,detail:'',description:'',visit:[5.3,4.3]},
- {id:'hall-east-north',name:'Holul camerelor de est',side:'ARIPA DE EST',area:2.15,x:8.25,z:2.5,w:1.95,d:1.225,measurement:'Open hall; area from source label',primary:false,detail:'',description:'',visit:[9.5,3.2]},
+ {id:'hall-east-north',name:'Holul camerelor de est',side:'ARIPA DE EST',area:2.15,x:8.25,z:2.5,w:1.95,d:1.225,measurement:'Open hall; area from source label',primary:false,detail:'Dressing',description:'Dulap cu uși glisante, lângă baie și dormitor.',visit:[9.5,3.2]},
  {id:'connection',name:'Pasajul interior',side:'SPAȚIU COMUN',area:.3,x:6.45,z:8.35,w:.25,d:1.2,measurement:'1.20 × 2.15 m opening',primary:false,detail:'Legătura dintre apartamente',description:'Trecere liberă între cele două holuri de intrare.',visit:[5.65,8.95]},
 ];
 export const shell=[[-.4,.6],[3.6,.6],[3.6,-.4],[14.6,-.4],[14.6,8.475],[13.95,8.475],[13.95,8.25],[8.25,8.25],[8.25,10.15],[3.95,10.15],[3.95,10.3],[-.4,10.3]];

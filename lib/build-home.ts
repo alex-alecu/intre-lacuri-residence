@@ -185,13 +185,13 @@ export function buildHome(artwork?:T.Texture){
   for(let i=0;i<count;i++){const xx=-w/2+(i+.5)*w/count;box(xx,h/2+.035,d/2+.017,w/count-.018,h-.12,.035,finish,g,.008);box(xx+w/count*.37,h*.49,d/2+.040,.010,.30,.018,bronze,g)}
   rectObstacle(x,z,w,d+.035,rot,name);contact(x,z,w+.2,d+.2);return g;
  }
- function coatWardrobe(){
-  const g=group(6.93,6.80,Math.PI/2);g.name='Hall coat wardrobe';
-  // Shallow body, front-facing hanging rails, sliding fronts, and lower shoe drawers.
-  box(0,1.21,-.02,1.80,2.40,.38,wood,g,.012);
-  for(const xx of [-.45,.45]){box(xx,1.48,.185,.876,1.76,.030,ivory,g,.009);box(xx+.32,1.43,.203,.016,.30,.012,brass,g,.005);box(xx,.32,.184,.876,.43,.030,ivory,g,.009);box(xx,.43,.202,.22,.016,.012,brass,g,.004)}
-  rectObstacle(6.93,6.80,1.80,.42,Math.PI/2,'Hall coat wardrobe');contact(6.93,6.80,.65,2.05);
-  fixtures.push({name:'Hall coat wardrobe',x:6.93,z:6.80,w:1.8,d:.42,rotation:Math.PI/2});
+ function slidingWardrobe(x:number,z:number,w:number,d:number,name:string){
+  const g=group(x,z,Math.PI/2);g.name=name;
+  // Total depth includes sliding fronts and recessed handles.
+  box(0,1.21,-.02,w,2.40,d-.04,wood,g,.012);
+  for(const xx of [-w/4,w/4]){box(xx,1.48,d/2-.025,w/2-.024,1.76,.030,ivory,g,.009);box(xx+w/4-.13,1.43,d/2-.007,.016,.30,.012,brass,g,.005);box(xx,.32,d/2-.026,w/2-.024,.43,.030,ivory,g,.009);box(xx,.43,d/2-.008,.22,.016,.012,brass,g,.004)}
+  rectObstacle(x,z,w,d,Math.PI/2,name);contact(x,z,d+.23,w+.25);
+  fixtures.push({name,x,z,w,d,rotation:Math.PI/2});
  }
  function sink(x:number,y:number,z:number,w:number,d:number,rot=0,parent:T.Object3D=furniture){
   const g=new T.Group();g.position.set(x,y,z);g.rotation.y=rot;parent.add(g);
@@ -326,7 +326,9 @@ export function buildHome(artwork?:T.Texture){
  }
 
  // Reference colours and seating, within the checked room dimensions.
- luxuryLiving();grandKitchen();grandDining();coatWardrobe();
+ luxuryLiving();grandKitchen();grandDining();
+ slidingWardrobe(6.93,6.80,1.80,.42,'Hall coat wardrobe');
+ slidingWardrobe(8.57,3.05,1.00,.60,'Small hall wardrobe');
 
  rug(2.42,2.44,2.7,2.95);bed(2.72,2.24,1.40,2.0);bedside(1.64,1.45);wardrobe(1.55,4.21,2.42,.60,Math.PI);desk(.39,2.30,Math.PI/2,1.20);chair(1.10,2.30,-Math.PI/2,sage,true);art(2.64,1.67,1.075,1.10,.74,0);pendant(2,2.75,.28);
  girlRoom();

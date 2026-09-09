@@ -413,6 +413,13 @@
       "depth": 0.419
     },
     {
+      "name": "Small hall wardrobe",
+      "x": 8.57,
+      "z": 3.05,
+      "width": 1,
+      "depth": 0.599
+    },
+    {
       "name": "Bed",
       "x": 2.72,
       "z": 2.24,
@@ -615,9 +622,16 @@
       "depth": 0.42,
       "fronts": "sliding"
     },
+    "smallHallWardrobe": {
+      "width": 1,
+      "depth": 0.6,
+      "height": 2.4,
+      "fronts": "sliding"
+    },
     "televisions": 0,
     "childBed": "House frame above the retained 0.95 x 1.85 m mattress"
   },
+  "smallHallClearance": 1.33,
   "coatHallClearance": 0.86,
   "diningCoffeeClearances": {
     "mainSofa": 0.45,
@@ -840,8 +854,8 @@
       "d": 1.225,
       "measurement": "Open hall; area from source label",
       "primary": false,
-      "detail": "",
-      "description": "",
+      "detail": "Dressing",
+      "description": "Dulap cu uși glisante, lângă baie și dormitor.",
       "visit": [
         9.5,
         3.2

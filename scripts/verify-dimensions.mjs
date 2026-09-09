@@ -67,6 +67,9 @@ export function verifyDimensions(home, canOccupy) {
   const coatWardrobe=home.obstacles.find(o=>o.name==='Hall coat wardrobe');
   const coatHallClearance=coatWardrobe ? 8-(coatWardrobe.x+coatWardrobe.w/2) : 0;
   if (coatHallClearance<.85) failures.push('The coat wardrobe must leave at least 0.85 m within the hall');
+  const smallHallWardrobe=home.obstacles.find(o=>o.name==='Small hall wardrobe');
+  const smallHallClearance=smallHallWardrobe ? 10.2-(smallHallWardrobe.x+smallHallWardrobe.w/2) : 0;
+  if (smallHallClearance<1.25) failures.push('The small hall wardrobe must leave at least 1.25 m of passage');
   for (const pot of home.obstacles.filter(o=>o.name==='Plant pot')) for (const sofa of home.obstacles.filter(o=>['Sofa','Sofa return'].includes(o.name))) {
     if (Math.abs(pot.x-sofa.x)<(pot.w+sofa.w)/2 && Math.abs(pot.z-sofa.z)<(pot.d+sofa.d)/2) failures.push('A plant pot intersects a sofa');
   }
@@ -76,5 +79,5 @@ export function verifyDimensions(home, canOccupy) {
     if (overlapX>.01 && overlapZ>.01) failures.push(`${f.name} intersects ${wall.name} at ${f.x}, ${f.z}`);
   }
   assert.deepEqual(failures, [], 'Plan dimensions and furniture clearances');
-  return {measurements, diningSouthAisle:southAisle, kitchenWorkAisle, diningSofaGap, coatHallClearance, coffeeToMainSofa, coffeeToSofaReturn, diningChairToCoffee};
+  return {measurements, diningSouthAisle:southAisle, kitchenWorkAisle, diningSofaGap, coatHallClearance, smallHallClearance, coffeeToMainSofa, coffeeToSofaReturn, diningChairToCoffee};
 }
