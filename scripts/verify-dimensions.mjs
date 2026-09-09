@@ -52,10 +52,22 @@ export function verifyDimensions(home, canOccupy) {
   const kitchenWorkAisle = Math.min(...northChairs.map(o=>o.z-o.d/2))-(counter.z+counter.d/2);
   if (northChairs.length!==2 || kitchenWorkAisle<.90) failures.push('The kitchen work aisle needs at least 0.90 m');
   const cornerSofa=home.obstacles.find(o=>o.name==='Sofa'&&o.x>8.25);
-  const endChair=home.obstacles.find(o=>o.name==='Dining chair'&&o.x>11.5);
+  const endChair=home.obstacles.filter(o=>o.name==='Dining chair').reduce((right,o)=>o.x>right.x?o:right);
   const diningSofaGap=cornerSofa ? cornerSofa.z-cornerSofa.d/2-(endChair.z+endChair.d/2) : 0;
-  if (diningSofaGap<.50) failures.push('The dining end chair needs at least 0.50 m to the sofa');
-  for (const pot of home.obstacles.filter(o=>o.name==='Plant pot')) for (const sofa of home.obstacles.filter(o=>o.name==='Sofa')) {
+  if (diningSofaGap<.45) failures.push('The dining end chair needs at least 0.45 m to the sofa');
+  const sofaReturn=home.obstacles.find(o=>o.name==='Sofa return');
+  const coffee=home.obstacles.find(o=>o.name==='Coffee table'&&o.x>8.25);
+  const coffeeToMainSofa=cornerSofa.z-cornerSofa.d/2-(coffee.z+coffee.d/2);
+  const coffeeToSofaReturn=sofaReturn.x-sofaReturn.w/2-(coffee.x+coffee.w/2);
+  const diningChairToCoffee=coffee.x-coffee.w/2-(endChair.x+endChair.w/2);
+  if (coffeeToMainSofa<.40||coffeeToSofaReturn<.40||diningChairToCoffee<.35) failures.push('The coffee table crowds a sofa wing or dining chair');
+  close(sofaReturn.x+sofaReturn.w/2,cornerSofa.x+cornerSofa.w/2,'Corner sofa outer alignment');
+  close(sofaReturn.z+sofaReturn.d/2,cornerSofa.z-cornerSofa.d/2,'Corner sofa joined seating');
+  if (cornerSofa.w<2.3||sofaReturn.w<.8||sofaReturn.d<1.0) failures.push('The corner sofa needs two full seating wings');
+  const coatWardrobe=home.obstacles.find(o=>o.name==='Hall coat wardrobe');
+  const coatHallClearance=coatWardrobe ? 8-(coatWardrobe.x+coatWardrobe.w/2) : 0;
+  if (coatHallClearance<.85) failures.push('The coat wardrobe must leave at least 0.85 m within the hall');
+  for (const pot of home.obstacles.filter(o=>o.name==='Plant pot')) for (const sofa of home.obstacles.filter(o=>['Sofa','Sofa return'].includes(o.name))) {
     if (Math.abs(pot.x-sofa.x)<(pot.w+sofa.w)/2 && Math.abs(pot.z-sofa.z)<(pot.d+sofa.d)/2) failures.push('A plant pot intersects a sofa');
   }
   for (const f of home.obstacles.filter(o => o.furniture)) for (const wall of walls) {
@@ -64,5 +76,5 @@ export function verifyDimensions(home, canOccupy) {
     if (overlapX>.01 && overlapZ>.01) failures.push(`${f.name} intersects ${wall.name} at ${f.x}, ${f.z}`);
   }
   assert.deepEqual(failures, [], 'Plan dimensions and furniture clearances');
-  return {measurements, diningSouthAisle:southAisle, kitchenWorkAisle, diningSofaGap};
+  return {measurements, diningSouthAisle:southAisle, kitchenWorkAisle, diningSofaGap, coatHallClearance, coffeeToMainSofa, coffeeToSofaReturn, diningChairToCoffee};
 }

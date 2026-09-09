@@ -28,13 +28,17 @@ assert.deepEqual(home.fixtures.find(f=>f.name==='West WC'),{name:'West WC',x:7.4
 assert.deepEqual(home.fixtures.find(f=>f.name==='East WC'),{name:'East WC',x:8.63,z:1.20,w:.47,d:.70,rotation:Math.PI/2});
 assert.equal(home.obstacles.filter(o=>o.name==='Office desk').length,2,'Both office desks remain');
 assert.equal(home.obstacles.filter(o=>o.name==='Dining chair').length,6,'Compact dining table has six chairs');
-assert.deepEqual(home.fixtures.find(f=>f.name==='Dining table'),{name:'Dining table',x:10.65,z:6.30,w:1.9,d:.9,rotation:0});
+assert.deepEqual(home.fixtures.find(f=>f.name==='Dining table'),{name:'Dining table',x:10.20,z:6.35,w:1.9,d:.9,rotation:0});
 assert.ok(home.obstacles.filter(o=>o.name==='Kitchen counter').every(o=>o.x>8.25),'Kitchen is in the east room');
 assert.equal(home.obstacles.filter(o=>o.name==='Sofa'&&o.x<6.45).length,1,'The west living room keeps its sofa');
 assert.equal(home.obstacles.filter(o=>o.name==='Sofa'&&o.x>8.25).length,1,'The dining room has a second sofa');
 assert.equal(home.obstacles.some(o=>o.name==='Media cabinet'),false,'The sitting areas have no TV cabinet');
-const compactSofa=furnitureDimensions.find(f=>f.name==='Sofa'&&f.x>8.25);
-assert.ok(compactSofa.depth>=.80&&compactSofa.depth<=.86,'The measured corner sofa depth includes its model scale');
+assert.equal(home.obstacles.some(o=>o.name==='Library'),false,'The library beside the living windows is removed');
+assert.ok(home.obstacles.some(o=>o.name==='Sofa return'),'The dining sofa has a full second seating wing');
+assert.equal(home.obstacles.filter(o=>o.name==='Coffee table').length,2,'Both sitting areas have coffee tables');
+assert.ok(home.obstacles.some(o=>o.name==='Hall coat wardrobe'),'The dining hall has coat storage');
+const westSofa=home.obstacles.find(o=>o.name==='Sofa'&&o.x<6.45);
+assert.ok(westSofa.x-westSofa.w/2>=0&&westSofa.x+westSofa.w/2<=3.875,'The living sofa fits fully against the solid rear wall');
 const start=[5.72,9.12];assert.ok(canOccupy(...start,home.obstacles,home.polygons),'Entry start is clear');
 const step=.08,minX=-1.8,minZ=-1.8,nx=226,nz=159;
 const index=(x,z)=>z*nx+x,world=(x,z)=>[minX+x*step,minZ+z*step];
@@ -42,7 +46,7 @@ const valid=new Uint8Array(nx*nz),visited=new Uint8Array(nx*nz);
 for(let z=0;z<nz;z++)for(let x=0;x<nx;x++)valid[index(x,z)]=canOccupy(...world(x,z),home.obstacles,home.polygons)?1:0;
 const sx=Math.round((start[0]-minX)/step),sz=Math.round((start[1]-minZ)/step),queue=[[sx,sz]];visited[index(sx,sz)]=1;
 for(let q=0;q<queue.length;q++){const [x,z]=queue[q];for(const [dx,dz]of [[1,0],[-1,0],[0,1],[0,-1]]){const xx=x+dx,zz=z+dz;if(xx<0||zz<0||xx>=nx||zz>=nz)continue;const i=index(xx,zz);if(valid[i]&&!visited[i]){visited[i]=1;queue.push([xx,zz])}}}
-const targets=[...rooms.map(r=>({id:r.id,point:r.visit})),{id:'west-balcony',point:[1.9,-.28]},{id:'west-balcony-arm',point:[-1.1,3.3]},{id:'east-balcony',point:[12.2,-1.0]},{id:'east-balcony-arm',point:[15.4,2.7]},{id:'master-east-balcony-door',point:[14.4,3.05]},{id:'guest-west-balcony-door',point:[-.2,3.45]},{id:'guest-north-balcony-door',point:[.95,.8]},{id:'master-north-balcony-door',point:[12.15,-.2]},{id:'master-wardrobe-approach',point:[11.3,1.5]},{id:'kitchen-preparation',point:[11.3,4.95]},{id:'dining-south',point:[11.35,7.55]},{id:'living-desk-approach',point:[1.24,8.05]},{id:'guest-desk-approach',point:[1.65,2.3]},{id:'dining-sofa-approach',point:[12.98,6.70]},{id:'dining-window-approach',point:[13.70,5.80]},{id:'sideboard-approach',point:[9.10,7.15]},{id:'living-sofa-approach',point:[3.30,5.94]},{id:'living-armchairs-approach',point:[3.30,7.00]},{id:'reading-tent-approach',point:[6.10,1.30]},{id:'child-play-area',point:[6.05,2.30]}];
+const targets=[...rooms.map(r=>({id:r.id,point:r.visit})),{id:'west-balcony',point:[1.9,-.28]},{id:'west-balcony-arm',point:[-1.1,3.3]},{id:'east-balcony',point:[12.2,-1.0]},{id:'east-balcony-arm',point:[15.4,2.7]},{id:'master-east-balcony-door',point:[14.4,3.05]},{id:'guest-west-balcony-door',point:[-.2,3.45]},{id:'guest-north-balcony-door',point:[.95,.8]},{id:'master-north-balcony-door',point:[12.15,-.2]},{id:'master-wardrobe-approach',point:[11.3,1.5]},{id:'kitchen-preparation',point:[11.3,4.95]},{id:'dining-south',point:[10.8,7.55]},{id:'living-desk-approach',point:[1.24,8.05]},{id:'guest-desk-approach',point:[1.65,2.3]},{id:'dining-sofa-approach',point:[12.30,6.87]},{id:'dining-sofa-return-approach',point:[12.84,6.25]},{id:'dining-window-approach',point:[13.70,5.68]},{id:'sideboard-approach',point:[9.10,7.15]},{id:'living-sofa-approach',point:[1.0,5.98]},{id:'living-armchairs-approach',point:[2.67,7.40]},{id:'living-west-chair-approach',point:[1.90,6.97]},{id:'living-east-chair-approach',point:[3.32,6.52]},{id:'living-window-approach',point:[.90,6.35]},{id:'reading-tent-approach',point:[6.10,1.30]},{id:'child-play-area',point:[6.05,2.30]},{id:'coat-wardrobe-approach',point:[7.57,6.80]},{id:'coat-hall-passage',point:[7.57,7.80]}];
 const results=targets.map(t=>{const [x,z]=t.point,clear=canOccupy(x,z,home.obstacles,home.polygons);const ix=Math.round((x-minX)/step),iz=Math.round((z-minZ)/step);return {id:t.id,clear,reachable:Boolean(visited[index(ix,iz)])}});
 let meshes=0,triangles=0;home.root.traverse(o=>{assert.ok(!o.isSprite,'No floating room labels or dimensions');if(o.isMesh){meshes++;triangles+=(o.geometry.index?.count??o.geometry.attributes.position?.count??0)/3;assert.ok(o.matrixWorld.elements.every(Number.isFinite),'Finite mesh transform')}});
 const report={dimensionAudit,furnitureDimensions,playerRadius:PLAYER_RADIUS,gridStep:step,meshes,triangles,obstacleCount:home.obstacles.length,reachableGridPoints:queue.length,rooms:results,fixtures:home.fixtures,balconyAreas:balconies.map(b=>({name:b.name,area:polygonArea(b.points)}))};
@@ -71,7 +75,9 @@ await writeFile('public/measurements.json',JSON.stringify({
  serviceShafts:home.obstacles.filter(o=>o.name==='Service shaft'),
  furnitureStatus:'Proposed sizes. The plans do not specify the new furniture. Width and depth include visible frames, handles, and worktops.',
  furnitureDimensions:furnitureDimensions.map(({name,x,z,width,depth})=>({name,x,z,width,depth})),
- design:{diningSeats:6,diningTable:{width:1.9,depth:.9},extraSofaRoom:'east dining',televisions:0,childBed:'House frame above the retained 0.95 x 1.85 m mattress'},
+ design:{diningSeats:6,diningTable:{width:1.9,depth:.9},extraSofaRoom:'east dining',cornerSofa:{width:2.45,depth:2.0},diningCoffeeTable:{width:.50,depth:.70},coatWardrobe:{width:1.8,depth:.42,fronts:'sliding'},televisions:0,childBed:'House frame above the retained 0.95 x 1.85 m mattress'},
+ coatHallClearance:Number(dimensionAudit.coatHallClearance.toFixed(3)),
+ diningCoffeeClearances:{mainSofa:Number(dimensionAudit.coffeeToMainSofa.toFixed(3)),sofaReturn:Number(dimensionAudit.coffeeToSofaReturn.toFixed(3)),diningChair:Number(dimensionAudit.diningChairToCoffee.toFixed(3))},
  kitchenWorkAisle:Number(dimensionAudit.kitchenWorkAisle.toFixed(3)),
  diningSofaGap:Number(dimensionAudit.diningSofaGap.toFixed(3)),
  diningSouthAisle:{value:Number(dimensionAudit.diningSouthAisle.toFixed(2)),status:'Model clearance with chairs in the shown position; not a pulled-out chair test.'},

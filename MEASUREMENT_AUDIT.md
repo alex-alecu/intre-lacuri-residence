@@ -49,13 +49,16 @@ The PDFs do not specify the new furniture sizes. These sizes are design choices.
 
 | Item | Size or change |
 | --- | --- |
-| Living sofa | 3.15 × 0.96 m visible bounds; sage fabric; moved to leave space for two armchairs |
+| Living sofa | 3.15 × 0.96 m visible bounds; sage fabric; centred on the 3.875 m solid rear wall, with 0.3625 m at each end |
 | Dining table | 1.90 × 0.90 m; reduced from 2.80 × 1.10 m for the reference design |
 | Dining chairs | 0.50 × 0.505 m each; six chairs in the new layout |
-| South dining aisle | 0.83 m with the chairs in their shown positions |
-| Dining corner sofa | 1.80 × 0.826 m visible bounds; 0.86 m movement depth; placed against the south wall |
-| Kitchen work aisle | 0.96 m from the counter to the north chair backs |
-| Dining chair to sofa | 0.545 m between the movement bounds |
+| South dining aisle | 0.78 m with the chairs in their shown positions |
+| Dining corner sofa | 2.45 × 2.00 m overall; joined south and east seating wings, each 0.85 m deep |
+| Kitchen work aisle | 1.01 m from the counter to the north chair backs |
+| Dining chair to sofa | 0.475 m between the movement bounds |
+| Dining coffee table | Oval wood table, 0.50 m east–west × 0.70 m north–south; gaps of 0.43 m and 0.45 m to the sofa wings |
+| Dining sideboard | Reduced to 0.30 m overall depth to keep the rear dining passage clear |
+| Hall coat wardrobe | 1.80 m wide × 0.42 m deep; sliding fronts; leaves 0.86 m clear within the hall |
 | Living coffee table | Oval wood table, 1.30 × 0.62 m |
 | Living armchairs | Two cream chairs, about 0.86 × 0.855 m each |
 | Reading tent | 0.92 × 0.92 m floor bounds; about 1.55 m high |
@@ -76,9 +79,9 @@ The aisle values apply to the chair positions shown. They do not describe cleara
 
 ## Reference design update
 
-The three supplied room photos guide the furniture, colours, and finishes. The dining room has a six-seat wood table, a woven cabinet, blue glass lights, and a second sofa. The west living room has sage and cream seating, an oval wood table, botanical prints, and a fabric pendant. The TV and its stone wall panel are removed. The child room uses a house bed, cloud lights, low toy storage, a small reading tent, and cream and pale pink fabric.
+The three supplied room photos guide the furniture, colours, and finishes. The dining room has a six-seat wood table, a woven cabinet, blue glass lights, and a full corner sofa with a coffee table. The west living room has sage and cream seating, an oval wood table, botanical prints, and a fabric pendant. The TV and its stone wall panel are removed. The child room uses a house bed, cloud lights, low toy storage, a small reading tent, and cream and pale pink fabric.
 
-All checked walls, columns, shafts, openings, and room dimensions remain in the same positions. Both office desks remain. The generated furniture dimensions include local object scale.
+All checked walls, columns, shafts, openings, and room dimensions remain in the same positions. Both office desks remain. The library beside the west windows is removed. The living sofa is centred on its solid rear wall. The coat wardrobe stops before the opening between the entry halls. The generated furniture dimensions include local object scale.
 
 ## Source differences and limits
 
@@ -91,7 +94,7 @@ All checked walls, columns, shafts, openings, and room dimensions remain in the 
 
 ## Verification
 
-`npm run test:model` checks 18 wall-face dimensions, six column sections, five service shafts, furniture-to-wall and furniture-to-door intersections, 50 furniture mesh groups, and 33 reachable positions. It checks all four balcony openings. It also checks the six dining chairs and both office desks. The movement grid is 0.08 m, with a player radius of 0.19 m.
+`npm run test:model` checks 18 wall-face dimensions, six column sections, five service shafts, furniture-to-wall and furniture-to-door intersections, 51 furniture mesh groups, and 39 reachable positions. It checks all four balcony openings. It also checks the six dining chairs and both office desks. The movement grid is 0.08 m, with a player radius of 0.19 m.
 
 The generated `public/measurements.json` contains the source mapping, differences, corrected dimensions, and furniture inventory. The temporary model report also contains each furniture group's visible bounds. A plan diagram made from the generated geometry was inspected against the PDF plans.
 
