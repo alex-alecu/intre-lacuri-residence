@@ -6,7 +6,7 @@ import {Tabs, TabsList, TabsTrigger} from '@/components/ui/tabs';
 import {Switch} from '@/components/ui/switch';
 import {Sheet, SheetClose, SheetContent, SheetTitle, SheetDescription} from '@/components/ui/sheet';
 import type {HomeScene} from '@/lib/home-scene';
-import {rooms} from '@/lib/plan';
+import {rooms,roomFootprints} from '@/lib/plan';
 import {sitePath} from '@/lib/site-path';
 
 export default function Home() {
@@ -120,7 +120,7 @@ export default function Home() {
         {mode==='walk'&&!locked&&ready&&!contextLost&&<button className="enter-walk" onClick={()=>model.current?.lock()}><Footprints size={20}/>Începe plimbarea<span>{touch?'Folosește săgețile și trage pe imagine.':'Esc eliberează mouse-ul'}</span></button>}
         {mode==='walk'&&locked&&<div className="crosshair"/>}
         {mode==='walk'&&locked&&<><div className="touch-controls" role="group" aria-label="Comenzi de deplasare">{[['ArrowLeft','←','Stânga'],['ArrowUp','↑','Înainte'],['ArrowDown','↓','Înapoi'],['ArrowRight','→','Dreapta']].map(([key,label,name])=><button key={key} data-direction={key} onContextMenu={e=>e.preventDefault()} onPointerDown={e=>{e.preventDefault();e.currentTarget.setPointerCapture(e.pointerId);model.current?.setTouchKey(e.pointerId,key);}} onPointerUp={e=>model.current?.setTouchKey(e.pointerId,null)} onPointerCancel={e=>model.current?.setTouchKey(e.pointerId,null)} onLostPointerCapture={e=>model.current?.setTouchKey(e.pointerId,null)} aria-label={name}>{label}</button>)}</div><button className="pause-walk" onClick={()=>model.current?.unlock()}><Pause/>Pauză</button></>}
-        <div className="view-bottom"><div className="selected-card"><span className="selected-icon">{roomIcon}</span><div><span className="eyebrow">{room.side}</span><strong>{room.name}</strong><p>{room.description}</p></div></div><div className="mini-map"><span>EȘTI AICI</span><svg viewBox="-1 -1 16.2 12.1" aria-label="Harta locuinței">{rooms.filter(r=>r.id!=='connection').map(r=><rect key={r.id} x={r.x} y={r.z} width={r.w} height={r.d} fill={r.id===selected?'#bd9d75':'#e2ded4'} stroke="#fff" strokeWidth=".1"/>)}<circle cx={position.x} cy={position.z} r=".26" fill="#3f5847" stroke="white" strokeWidth=".12"/></svg></div></div>
+        <div className="view-bottom"><div className="selected-card"><span className="selected-icon">{roomIcon}</span><div><span className="eyebrow">{room.side}</span><strong>{room.name}</strong><p>{room.description}</p></div></div><div className="mini-map"><span>EȘTI AICI</span><svg viewBox="-1 -1 16.2 12.1" aria-label="Harta locuinței">{rooms.filter(r=>r.id!=='connection').map(r=><polygon key={r.id} points={(roomFootprints[r.id]??[[r.x,r.z],[r.x+r.w,r.z],[r.x+r.w,r.z+r.d],[r.x,r.z+r.d]]).map(p=>p.join(',')).join(' ')} fill={r.id===selected?'#bd9d75':'#e2ded4'} stroke="#fff" strokeWidth=".1"/>)}<circle cx={position.x} cy={position.z} r=".26" fill="#3f5847" stroke="white" strokeWidth=".12"/></svg></div></div>
         <footer className="model-footer"><span>Acasă, împreună</span><div><label><Switch checked={furniture} onCheckedChange={v=>{setFurniture(v);model.current?.setFurniture(v);}} aria-label="Arată mobilierul"/>Mobilier</label></div><button onClick={openNotes}><FileText size={14}/>Detalii</button></footer>
       </section>
     </div>

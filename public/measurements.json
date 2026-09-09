@@ -5,28 +5,27 @@
     "z": "south",
     "y": "up"
   },
-  "sourcePDF": "relevee ap 11-12 A32_260629_152328.pdf",
-  "sourceImage": "building.png",
+  "sources": {
+    "floorPlan": "A 07 plan etaj 1.pdf",
+    "apartmentPlans": "relevee ap 11-12 A32_260629_152328.pdf"
+  },
   "apartmentLabels": {
-    "pdf": [
-      "11",
-      "12"
-    ],
-    "building": [
+    "floorPlan": [
       "6",
       "7"
     ],
-    "user": [
-      "12",
-      "13"
+    "apartmentPlans": [
+      "11",
+      "12"
     ],
     "model": [
-      "left",
-      "right"
+      "west",
+      "east"
     ]
   },
   "interiorArea": 117.79,
   "balconyArea": 22.62,
+  "areaStatus": "Source labels; not a new site measurement.",
   "wallHeight": {
     "value": 2.7,
     "status": "assumed"
@@ -34,8 +33,20 @@
   "floorDatum": 6.4,
   "wallThickness": {
     "external": 0.4,
-    "internal": 0.13,
-    "party": 0.25
+    "externalWall": 0.25,
+    "externalInsulation": 0.15,
+    "internal": 0.125,
+    "party": 0.25,
+    "entry": 0.25
+  },
+  "calibration": {
+    "source": "A07 vector drawing",
+    "pointsPerMetre": 28.3465,
+    "origin": {
+      "x": 277.7565,
+      "y": 166.0028
+    },
+    "note": "The 13 cm partition labels round the drawn 12.5 cm. Model geometry follows the vector wall faces."
   },
   "hallOpening": {
     "x": [
@@ -50,12 +61,502 @@
     "height": 2.15,
     "status": "design proposal; structure not verified"
   },
-  "sourceConflicts": [
-    "Daughter room depth: image3.00m; PDF3.05m. Model uses3.00m.",
-    "Guest depth: PDF3.57m; image3.58m. Model uses3.57m.",
-    "Right living width: image5.95m; one PDF line5.70m. Model uses5.95m.",
-    "Right entry1.55m includes0.25m wall; model clear width1.30m."
+  "sourceDifferences": [
+    "Child room depth: A07 label and drawing 3.00 m; apartment PDF label 3.05 m. Model retains 3.00 m. Site measurement is unresolved.",
+    "Guest dimensions: A07 vector 3.875 x 3.575 m. Labels round or truncate to 3.87 x 3.57/3.58 m.",
+    "East kitchen width: 5.95 m between wall faces; 5.70 m to the projecting column face. These are different measurement lines.",
+    "East entry: 1.30 m clear; the 1.55 m dimension includes the 0.25 m party wall.",
+    "Utility: 1.65 m inside; the 1.77 m line is outside its 0.125 m north partition.",
+    "Guest closure, internal hall connection, and all furniture layouts are design proposals."
   ],
+  "checkedDimensions": [
+    {
+      "label": "Guest width",
+      "value": 3.875
+    },
+    {
+      "label": "Guest depth",
+      "value": 3.575
+    },
+    {
+      "label": "Child width",
+      "value": 4
+    },
+    {
+      "label": "Child depth",
+      "value": 3
+    },
+    {
+      "label": "Master width",
+      "value": 3.875
+    },
+    {
+      "label": "Master depth",
+      "value": 3.6
+    },
+    {
+      "label": "West bath width",
+      "value": 1.8
+    },
+    {
+      "label": "West bath depth",
+      "value": 2.45
+    },
+    {
+      "label": "East bath width",
+      "value": 1.95
+    },
+    {
+      "label": "East bath depth",
+      "value": 2.375
+    },
+    {
+      "label": "Utility width",
+      "value": 2.2
+    },
+    {
+      "label": "Utility depth",
+      "value": 1.65
+    },
+    {
+      "label": "West living width",
+      "value": 6.45
+    },
+    {
+      "label": "West living depth",
+      "value": 5.2
+    },
+    {
+      "label": "East kitchen width",
+      "value": 5.95
+    },
+    {
+      "label": "East kitchen depth",
+      "value": 4.275
+    },
+    {
+      "label": "West entry width",
+      "value": 1.45
+    },
+    {
+      "label": "East entry width",
+      "value": 1.3
+    }
+  ],
+  "columns": [
+    {
+      "x": 0,
+      "z": 1.1,
+      "w": 0.5,
+      "d": 0.7,
+      "name": "Retained concrete column",
+      "furniture": false
+    },
+    {
+      "x": 0,
+      "z": 7.75,
+      "w": 0.5,
+      "d": 0.5,
+      "name": "Retained concrete column",
+      "furniture": false
+    },
+    {
+      "x": 8.125,
+      "z": 0.5,
+      "w": 0.25,
+      "d": 1.5,
+      "name": "Retained concrete column",
+      "furniture": false
+    },
+    {
+      "x": 14.325,
+      "z": 0.5,
+      "w": 0.25,
+      "d": 1.5,
+      "name": "Retained concrete column",
+      "furniture": false
+    },
+    {
+      "x": 14.2,
+      "z": 8.125,
+      "w": 0.5,
+      "d": 0.7,
+      "name": "Retained concrete column",
+      "furniture": false
+    },
+    {
+      "x": 8.125,
+      "z": 8.95,
+      "w": 0.25,
+      "d": 2.4,
+      "name": "Retained concrete column",
+      "furniture": false
+    }
+  ],
+  "serviceShafts": [
+    {
+      "x": 7.865,
+      "z": 3.41,
+      "w": 0.27,
+      "d": 0.57,
+      "name": "Service shaft",
+      "furniture": false
+    },
+    {
+      "x": 8.385,
+      "z": 0.375,
+      "w": 0.27,
+      "d": 0.75,
+      "name": "Service shaft",
+      "furniture": false
+    },
+    {
+      "x": 10.5,
+      "z": 3.86,
+      "w": 0.34,
+      "d": 0.27,
+      "name": "Service shaft",
+      "furniture": false
+    },
+    {
+      "x": 2.415,
+      "z": 9.765,
+      "w": 0.27,
+      "d": 0.27,
+      "name": "Service shaft",
+      "furniture": false
+    },
+    {
+      "x": 4.59,
+      "z": 9.765,
+      "w": 0.57,
+      "d": 0.27,
+      "name": "Service shaft",
+      "furniture": false
+    }
+  ],
+  "furnitureStatus": "Proposed sizes. The plans do not specify the new furniture. Width and depth include visible frames, handles, and worktops.",
+  "furnitureDimensions": [
+    {
+      "name": "Sofa",
+      "x": 3.35,
+      "z": 5.4,
+      "width": 3.15,
+      "depth": 0.955
+    },
+    {
+      "name": "Lounge chair",
+      "x": 1.46,
+      "z": 6.85,
+      "width": 0.86,
+      "depth": 0.855
+    },
+    {
+      "name": "Media cabinet",
+      "x": 3.75,
+      "z": 7.88,
+      "width": 2.3,
+      "depth": 0.4
+    },
+    {
+      "name": "Library",
+      "x": 0.56,
+      "z": 7.56,
+      "width": 1.235,
+      "depth": 0.3645
+    },
+    {
+      "name": "Office desk",
+      "x": 1.24,
+      "z": 9.52,
+      "width": 1.5,
+      "depth": 0.68
+    },
+    {
+      "name": "Chair",
+      "x": 1.24,
+      "z": 8.61,
+      "width": 0.5415,
+      "depth": 0.543
+    },
+    {
+      "name": "Office tall storage",
+      "x": 2.3,
+      "z": 9.24,
+      "width": 0.45,
+      "depth": 0.649
+    },
+    {
+      "name": "Shallow hall storage",
+      "x": 6.31,
+      "z": 6.65,
+      "width": 1.35,
+      "depth": 0.309
+    },
+    {
+      "name": "Plant pot",
+      "x": 0.4,
+      "z": 5.1,
+      "width": 0.714,
+      "depth": 0.95
+    },
+    {
+      "name": "Plant pot",
+      "x": 0.23,
+      "z": 9.52,
+      "width": 0.714,
+      "depth": 0.95
+    },
+    {
+      "name": "Kitchen counter",
+      "x": 12.43,
+      "z": 4.105,
+      "width": 3.4,
+      "depth": 0.735
+    },
+    {
+      "name": "Kitchen fridge oven pantry",
+      "x": 8.6,
+      "z": 4.68,
+      "width": 1.8,
+      "depth": 0.736
+    },
+    {
+      "name": "Dining sideboard",
+      "x": 9.1,
+      "z": 7.78,
+      "width": 1.35,
+      "depth": 0.469
+    },
+    {
+      "name": "Dining table",
+      "x": 11.35,
+      "z": 6.18,
+      "width": 2.8,
+      "depth": 1.1
+    },
+    {
+      "name": "Chair",
+      "x": 10.45,
+      "z": 5.5,
+      "width": 0.5,
+      "depth": 0.505
+    },
+    {
+      "name": "Chair",
+      "x": 10.45,
+      "z": 6.86,
+      "width": 0.5,
+      "depth": 0.505
+    },
+    {
+      "name": "Chair",
+      "x": 11.35,
+      "z": 5.5,
+      "width": 0.5,
+      "depth": 0.505
+    },
+    {
+      "name": "Chair",
+      "x": 11.35,
+      "z": 6.86,
+      "width": 0.5,
+      "depth": 0.505
+    },
+    {
+      "name": "Chair",
+      "x": 12.25,
+      "z": 5.5,
+      "width": 0.5,
+      "depth": 0.505
+    },
+    {
+      "name": "Chair",
+      "x": 12.25,
+      "z": 6.86,
+      "width": 0.5,
+      "depth": 0.505
+    },
+    {
+      "name": "Chair",
+      "x": 9.65,
+      "z": 6.18,
+      "width": 0.5,
+      "depth": 0.505
+    },
+    {
+      "name": "Chair",
+      "x": 13.05,
+      "z": 6.18,
+      "width": 0.5,
+      "depth": 0.505
+    },
+    {
+      "name": "Bed",
+      "x": 2.72,
+      "z": 2.24,
+      "width": 1.58,
+      "depth": 2.165
+    },
+    {
+      "name": "Wardrobe",
+      "x": 1.55,
+      "z": 4.21,
+      "width": 2.42,
+      "depth": 0.646
+    },
+    {
+      "name": "Office desk",
+      "x": 0.39,
+      "z": 2.3,
+      "width": 1.2,
+      "depth": 0.68
+    },
+    {
+      "name": "Chair",
+      "x": 1.1,
+      "z": 2.3,
+      "width": 0.5415,
+      "depth": 0.543
+    },
+    {
+      "name": "Child bed",
+      "x": 7.26,
+      "z": 1.65,
+      "width": 1.13,
+      "depth": 2.015
+    },
+    {
+      "name": "Child wardrobe",
+      "x": 4.34,
+      "z": 0.3,
+      "width": 0.58,
+      "depth": 0.569
+    },
+    {
+      "name": "Bed",
+      "x": 13.02,
+      "z": 1.51,
+      "width": 1.98,
+      "depth": 2.265
+    },
+    {
+      "name": "Wardrobe",
+      "x": 10.65,
+      "z": 1.25,
+      "width": 2.4,
+      "depth": 0.646
+    },
+    {
+      "name": "West bath tub",
+      "x": 7.1,
+      "z": 5.17,
+      "width": 1.732,
+      "depth": 0.752
+    },
+    {
+      "name": "West WC",
+      "x": 7.42,
+      "z": 3.52,
+      "width": 0.47,
+      "depth": 0.674
+    },
+    {
+      "name": "Bathroom vanity",
+      "x": 7.7,
+      "z": 4.36,
+      "width": 0.685,
+      "depth": 0.5619
+    },
+    {
+      "name": "East bath tub",
+      "x": 9.365,
+      "z": 0.39,
+      "width": 1.612,
+      "depth": 0.732
+    },
+    {
+      "name": "East WC",
+      "x": 8.63,
+      "z": 1.2,
+      "width": 0.47,
+      "depth": 0.674
+    },
+    {
+      "name": "Bathroom vanity",
+      "x": 8.525,
+      "z": 1.94,
+      "width": 0.665,
+      "depth": 0.5215
+    },
+    {
+      "name": "Utility WC",
+      "x": 4.54,
+      "z": 9.22,
+      "width": 0.47,
+      "depth": 0.674
+    },
+    {
+      "name": "Balcony storage bench",
+      "x": 2.37,
+      "z": 0.36,
+      "width": 1.6,
+      "depth": 0.455
+    },
+    {
+      "name": "Balcony planter",
+      "x": 3.36,
+      "z": 0.03,
+      "width": 0.5141,
+      "depth": 1.3243
+    },
+    {
+      "name": "Balcony planter",
+      "x": -1.05,
+      "z": 3.93,
+      "width": 1.1226,
+      "depth": 0.684
+    },
+    {
+      "name": "Balcony planter",
+      "x": -0.68,
+      "z": 1.61,
+      "width": 0.5141,
+      "depth": 0.99
+    },
+    {
+      "name": "Balcony storage bench",
+      "x": 14.84,
+      "z": 0.28,
+      "width": 1.4,
+      "depth": 0.455
+    },
+    {
+      "name": "Balcony planter",
+      "x": 15.24,
+      "z": 3.43,
+      "width": 1.1726,
+      "depth": 0.684
+    },
+    {
+      "name": "Balcony planter",
+      "x": 15.55,
+      "z": -1.43,
+      "width": 0.5726,
+      "depth": 0.684
+    },
+    {
+      "name": "Balcony planter",
+      "x": 11.72,
+      "z": -1.3,
+      "width": 0.5141,
+      "depth": 0.7243
+    }
+  ],
+  "diningSouthAisle": {
+    "value": 0.85,
+    "status": "Model clearance with chairs in the shown position; not a pulled-out chair test."
+  },
   "rooms": [
     {
       "id": "living",
@@ -80,17 +581,17 @@
       "name": "Dormitor matrimonial",
       "side": "ARIPA DE EST",
       "area": 13.95,
-      "x": 10.33,
+      "x": 10.325,
       "z": 0,
-      "w": 3.87,
+      "w": 3.875,
       "d": 3.6,
-      "measurement": "3.87 × 3.60 m",
+      "measurement": "3.875 × 3.60 m",
       "primary": true,
       "detail": "Odihnă și liniște",
       "description": "Pat tapițat, dulapuri înalte și lumină caldă pentru lectură.",
       "visit": [
-        11.1,
-        2.6
+        11.3,
+        2.8
       ]
     },
     {
@@ -118,9 +619,9 @@
       "area": 13.74,
       "x": 0,
       "z": 1,
-      "w": 3.87,
-      "d": 3.57,
-      "measurement": "3.87 × 3.57 m",
+      "w": 3.875,
+      "d": 3.575,
+      "measurement": "3.875 × 3.575 m",
       "primary": true,
       "detail": "Ospitalitate și lucru",
       "description": "Pat confortabil, birou lângă fereastră și acces direct din hol.",
@@ -135,10 +636,10 @@
       "side": "ARIPA DE EST",
       "area": 26.61,
       "x": 8.25,
-      "z": 3.73,
+      "z": 3.725,
       "w": 5.95,
-      "d": 4.28,
-      "measurement": "5.95 × 4.28 m + entry recess",
+      "d": 4.275,
+      "measurement": "5.95 × 4.275 m + entry recess",
       "primary": true,
       "detail": "Gătit și mese împreună",
       "description": "Masă pentru opt persoane, blat generos și depozitare până la tavan.",
@@ -151,12 +652,12 @@
       "id": "bath",
       "name": "Băi și spălătorie",
       "side": "SPAȚIU COMUN",
-      "area": 12.67,
+      "area": 4.41,
       "x": 6.2,
-      "z": 3.13,
+      "z": 3.125,
       "w": 1.8,
       "d": 2.45,
-      "measurement": "1.80 × 2.45 / 1.95 × 2.37 m",
+      "measurement": "1.80 × 2.45 / 1.95 × 2.375 m",
       "primary": true,
       "detail": "Piatră și lemn natural",
       "description": "Căzi, vase WC suspendate și lavoare cu depozitare integrată.",
@@ -173,8 +674,8 @@
       "x": 8.25,
       "z": 0,
       "w": 1.95,
-      "d": 2.37,
-      "measurement": "1.95 × 2.37 m",
+      "d": 2.375,
+      "measurement": "1.95 × 2.375 m",
       "primary": false,
       "detail": "",
       "description": "",
@@ -188,7 +689,7 @@
       "name": "Spălătorie și WC",
       "side": "ARIPA DE VEST",
       "area": 3.63,
-      "x": 2.68,
+      "x": 2.675,
       "z": 8.25,
       "w": 2.2,
       "d": 1.65,
@@ -197,8 +698,8 @@
       "detail": "",
       "description": "",
       "visit": [
-        4.4,
-        8.8
+        3.8,
+        8.65
       ]
     },
     {
@@ -206,10 +707,10 @@
       "name": "Holul de vest",
       "side": "ARIPA DE VEST",
       "area": 2.57,
-      "x": 5.01,
-      "z": 8.14,
-      "w": 1.44,
-      "d": 1.76,
+      "x": 5,
+      "z": 8.125,
+      "w": 1.45,
+      "d": 1.775,
       "measurement": "1.45 m clear width",
       "primary": false,
       "detail": "",
@@ -225,16 +726,52 @@
       "side": "ARIPA DE EST",
       "area": 4.72,
       "x": 6.7,
-      "z": 5.83,
+      "z": 5.825,
       "w": 1.3,
-      "d": 4.07,
-      "measurement": "1.30 × 4.07 m",
+      "d": 4.075,
+      "measurement": "1.30 × 4.075 m",
       "primary": false,
       "detail": "",
       "description": "",
       "visit": [
         7.35,
         9.1
+      ]
+    },
+    {
+      "id": "hall-west-north",
+      "name": "Holul camerelor de vest",
+      "side": "ARIPA DE VEST",
+      "area": 3.01,
+      "x": 4,
+      "z": 3.125,
+      "w": 2.075,
+      "d": 1.575,
+      "measurement": "Open hall; area from source label",
+      "primary": false,
+      "detail": "",
+      "description": "",
+      "visit": [
+        5.3,
+        4.3
+      ]
+    },
+    {
+      "id": "hall-east-north",
+      "name": "Holul camerelor de est",
+      "side": "ARIPA DE EST",
+      "area": 2.15,
+      "x": 8.25,
+      "z": 2.5,
+      "w": 1.95,
+      "d": 1.225,
+      "measurement": "Open hall; area from source label",
+      "primary": false,
+      "detail": "",
+      "description": "",
+      "visit": [
+        9.5,
+        3.2
       ]
     },
     {
@@ -256,6 +793,254 @@
       ]
     }
   ],
+  "roomFootprints": {
+    "living": [
+      [
+        0,
+        4.7
+      ],
+      [
+        6.075,
+        4.7
+      ],
+      [
+        6.075,
+        5.7
+      ],
+      [
+        6.45,
+        5.7
+      ],
+      [
+        6.45,
+        8.125
+      ],
+      [
+        2.55,
+        8.125
+      ],
+      [
+        2.55,
+        9.63
+      ],
+      [
+        2.28,
+        9.63
+      ],
+      [
+        2.28,
+        9.9
+      ],
+      [
+        0,
+        9.9
+      ],
+      [
+        0,
+        8
+      ],
+      [
+        0.25,
+        8
+      ],
+      [
+        0.25,
+        7.5
+      ],
+      [
+        0,
+        7.5
+      ]
+    ],
+    "guest": [
+      [
+        0.25,
+        1
+      ],
+      [
+        3.875,
+        1
+      ],
+      [
+        3.875,
+        4.575
+      ],
+      [
+        0,
+        4.575
+      ],
+      [
+        0,
+        1.45
+      ],
+      [
+        0.25,
+        1.45
+      ]
+    ],
+    "kitchen": [
+      [
+        8.25,
+        3.725
+      ],
+      [
+        10.33,
+        3.725
+      ],
+      [
+        10.33,
+        3.995
+      ],
+      [
+        10.67,
+        3.995
+      ],
+      [
+        10.67,
+        3.725
+      ],
+      [
+        14.2,
+        3.725
+      ],
+      [
+        14.2,
+        7.775
+      ],
+      [
+        13.95,
+        7.775
+      ],
+      [
+        13.95,
+        8
+      ],
+      [
+        8.25,
+        8
+      ],
+      [
+        8.25,
+        7.75
+      ],
+      [
+        8,
+        7.75
+      ],
+      [
+        8,
+        5.825
+      ],
+      [
+        8.25,
+        5.825
+      ]
+    ],
+    "bath": [
+      [
+        6.2,
+        3.125
+      ],
+      [
+        7.73,
+        3.125
+      ],
+      [
+        7.73,
+        3.695
+      ],
+      [
+        8,
+        3.695
+      ],
+      [
+        8,
+        5.575
+      ],
+      [
+        6.2,
+        5.575
+      ]
+    ],
+    "bath-right": [
+      [
+        8.52,
+        0
+      ],
+      [
+        10.2,
+        0
+      ],
+      [
+        10.2,
+        2.375
+      ],
+      [
+        8.25,
+        2.375
+      ],
+      [
+        8.25,
+        0.75
+      ],
+      [
+        8.52,
+        0.75
+      ]
+    ],
+    "utility": [
+      [
+        2.675,
+        8.25
+      ],
+      [
+        4.875,
+        8.25
+      ],
+      [
+        4.875,
+        9.63
+      ],
+      [
+        4.305,
+        9.63
+      ],
+      [
+        4.305,
+        9.9
+      ],
+      [
+        2.675,
+        9.9
+      ]
+    ],
+    "hall-east-north": [
+      [
+        8.25,
+        2.5
+      ],
+      [
+        10.2,
+        2.5
+      ],
+      [
+        10.2,
+        3.725
+      ],
+      [
+        8.8,
+        3.725
+      ],
+      [
+        8.8,
+        3.6
+      ],
+      [
+        8.25,
+        3.6
+      ]
+    ]
+  },
   "balconies": [
     {
       "name": "Balconul de vest",
@@ -337,14 +1122,30 @@
     ],
     [
       14.6,
-      8.26
+      8.475
+    ],
+    [
+      13.95,
+      8.475
+    ],
+    [
+      13.95,
+      8.25
     ],
     [
       8.25,
-      8.26
+      8.25
     ],
     [
       8.25,
+      10.15
+    ],
+    [
+      3.95,
+      10.15
+    ],
+    [
+      3.95,
       10.3
     ],
     [
@@ -352,5 +1153,5 @@
       10.3
     ]
   ],
-  "note": "Room bounding rectangles are location aids. They can overlap. Areas come from source labels, not these rectangles."
+  "note": "Source areas and navigation zones use different boundaries. Do not calculate floor area from room bounding rectangles."
 }

@@ -18,7 +18,7 @@ export function buildHome(){
   const t=new T.CanvasTexture(c);t.wrapS=t.wrapT=T.RepeatWrapping;t.colorSpace=T.SRGBColorSpace;t.anisotropy=8;textures.push(t);return t;
  }
  const oakMap=texture('oak');oakMap.repeat.set(.24,.70);const oak=mat('#ffffff',.66);oak.map=oakMap;
- const wood=mat('#b98f61',.52),darkwood=mat('#6d5139',.6),plaster=mat('#eee9da',.9),trim=mat('#f5f0e6',.55),sage=mat('#85876a',.86),clay=mat('#b2785e',.9),black=mat('#343a35',.38,.3),brass=mat('#a68a55',.32,.72),white=mat('#f0efdf',.25),stone=mat('#ece4d2',.62),glass=new T.MeshPhysicalMaterial({color:'#d1e3db',transparent:true,opacity:.18,roughness:.12,metalness:.05,side:T.DoubleSide,depthWrite:false});
+ const wood=mat('#b98f61',.52),plaster=mat('#eee9da',.9),trim=mat('#f5f0e6',.55),sage=mat('#85876a',.86),clay=mat('#b2785e',.9),black=mat('#343a35',.38,.3),brass=mat('#a68a55',.32,.72),white=mat('#f0efdf',.25),stone=mat('#ece4d2',.62),glass=new T.MeshPhysicalMaterial({color:'#d1e3db',transparent:true,opacity:.18,roughness:.12,metalness:.05,side:T.DoubleSide,depthWrite:false});
  const linen=mat('#f0e7d3',.97);linen.map=texture('linen');const tile=mat('#f0eddf',.75);tile.map=texture('stone');tile.map.repeat.set(2,2);
  const rugmat=mat('#efe7d6',1);rugmat.map=texture('rug');rugmat.map.repeat.set(3,3);
  const walnut=mat('#886345',.45),ivory=mat('#e5dcc8',.7),bronze=mat('#92764e',.29,.72);
@@ -58,7 +58,7 @@ export function buildHome(){
    }else{
     box(-w/2-.025,1.06,0,.055,2.15,t+.045,wood,g);box(w/2+.025,1.06,0,.055,2.15,t+.045,wood,g);box(0,2.135,0,w+.08,.065,t+.045,wood,g);
     if(name!=='Hall connection'){
-     const hingeAtEnd=o.hinge==='end',leaf=new T.Group();leaf.position.x=hingeAtEnd?w/2-.02:-w/2+.02;leaf.rotation.y=(hingeAtEnd?1:-1)*(o.swing==='reverse'?-1:1)*Math.PI*.49;g.add(leaf);const sign=hingeAtEnd?-1:1;box(sign*(w/2-.04),1.025,0,w-.08,2.05,.04,mat('#c1ae8f'),leaf);box(sign*(w-.15),1.03,.05,.1,.025,.03,black,leaf);
+     const hingeAtEnd=o.hinge==='end',leaf=new T.Group();leaf.position.x=hingeAtEnd?w/2-.02:-w/2+.02;leaf.rotation.y=(hingeAtEnd?1:-1)*(o.swing==='reverse'?-1:1)*Math.PI*.49;g.add(leaf);const sign=hingeAtEnd?-1:1;box(sign*(w/2-.04),1.025,0,w-.08,2.05,.04,o.balcony?glass:mat('#c1ae8f'),leaf).name='Open door leaf';box(sign*(w-.15),1.03,.05,.1,.025,.03,black,leaf);
     }
    }
    cursor=o.b;
@@ -67,22 +67,28 @@ export function buildHome(){
  // Clear dimensions set the inner faces. All main columns are retained.
  wall('x',.8,-.4,3.6,.4,[{a:.5,b:1.4,kind:'door',h:2.2}],'Guest north wall');
  wall('z',3.8,-.4,1,.4);wall('x',-.2,3.6,14.6,.4,[{a:4.7,b:6.5,kind:'window'},{a:8.8,b:9.7,kind:'window',sill:1,h:1.2},{a:11.7,b:13.5,kind:'window',balcony:true}]);
- wall('z',-.2,1,9.9,.4,[{a:2.1,b:3.9,kind:'window'},{a:5.1,b:6.9,kind:'window'},{a:8.25,b:9.15,kind:'window'}]);
- wall('z',14.4,0,8.26,.4,[{a:1.05,b:2.85,kind:'window'},{a:5.05,b:6.85,kind:'window'}]);
- wall('x',10.1,-.4,8.25,.4,[{a:5.15,b:6.05,kind:'door',h:2.1},{a:6.9,b:7.8,kind:'door',h:2.1}]);
+ wall('z',-.2,1,9.9,.4,[{a:2.1,b:3.9,kind:'window',balcony:true},{a:5.1,b:6.9,kind:'window'},{a:8.2,b:9.1,kind:'window'}]);
+ wall('z',14.4,0,8.475,.4,[{a:2.6,b:3.5,kind:'door',h:2.2,balcony:true,swing:'reverse'},{a:5.2,b:7,kind:'window'}],'East exterior wall');
+ wall('x',10.1,-.4,3.95,.4);
+ wall('x',10.025,3.95,8.25,.25,[{a:5.091,b:5.991,kind:'door',h:2.1},{a:6.85,b:7.75,kind:'door',h:2.1}],'Entry wall');
  // Close the original entry doors. The stair landing is outside the model.
- for(const x of [5.6,7.35]){box(x,1.055,10.03,.86,2.11,.07,mat('#656f56'),upper);obstacle(x,10.03,.9,.1,'Closed apartment entrance');box(x+.29,1,.0+9.97,.12,.025,.035,brass,upper)}
- wall('x',8.135,8.25,14.6,.25);wall('z',8.125,8.01,10.3,.25);
- wall('z',8.125,0,5.58,.25);wall('x',5.705,6.07,8.25,.25);
- wall('z',6.575,5.83,9.9,.25,[{a:8.35,b:9.55,kind:'door',h:2.15}],'Hall connection');
- wall('z',3.935,1,4.7,.13,[{a:3.4,b:4.3,kind:'door',h:2.1,swing:'reverse'}],'Guest hall door');wall('x',3.065,4,8,.13,[{a:4.7,b:5.6,kind:'door',h:2.1,swing:'reverse'}]);
- wall('x',4.635,0,3.87,.13,[],'Closed guest south partition');
- wall('z',6.135,3.13,5.58,.13,[{a:3.36,b:4.16,kind:'door',h:2.1,hinge:'end'}]);
- wall('x',2.435,8.25,10.2,.13,[{a:9.25,b:10.05,kind:'door',h:2.1,hinge:'end',swing:'reverse'}]);
- wall('z',10.265,0,3.73,.13,[{a:2.6,b:3.5,kind:'door',h:2.1}]);wall('x',3.665,10.33,14.2,.13);
- wall('x',8.185,2.55,5.01,.13);wall('z',2.615,8.25,9.9,.13);wall('z',4.945,8.25,9.9,.13,[{a:8.4,b:9.2,kind:'door',h:2.1}]);
+ for(const x of [5.541,7.30]){box(x,1.055,10.025,.86,2.11,.07,mat('#656f56'),upper);obstacle(x,10.025,.9,.1,'Closed apartment entrance');box(x+.29,1,9.97,.12,.025,.035,brass,upper)}
+ wall('x',8.125,8.25,14.6,.25);wall('z',8.125,7.75,10.15,.25);
+ wall('z',8.125,0,5.575,.25);wall('x',5.7,6.45,8.25,.25);
+ wall('x',5.6375,6.075,6.45,.125);
+ wall('z',6.575,5.7,9.9,.25,[{a:8.35,b:9.55,kind:'door',h:2.15}],'Hall connection');
+ // Guest closure and its 90 cm hall door remain part of the proposed design.
+ wall('z',3.9375,1,4.7,.125,[{a:3.4,b:4.3,kind:'door',h:2.1,swing:'reverse'}],'Guest hall door');wall('x',3.0625,4,8,.125,[{a:4.7,b:5.6,kind:'door',h:2.1,swing:'reverse'}]);
+ wall('x',4.6375,0,3.875,.125,[],'Closed guest south partition');
+ wall('z',6.1375,3.125,5.7,.125,[{a:3.325,b:4.125,kind:'door',h:2.1,hinge:'end'}]);
+ wall('x',2.4375,8.25,10.2,.125,[{a:9.25,b:10.05,kind:'door',h:2.1,hinge:'end',swing:'reverse'}]);
+ wall('z',10.2625,0,3.725,.125,[{a:2.6,b:3.5,kind:'door',h:2.1}]);wall('x',3.6625,10.325,14.2,.125);
+ wall('x',3.6625,8.25,8.8,.125,[],'East hall partition');
+ wall('x',8.1875,2.55,5,.125);wall('z',2.6125,8.25,9.9,.125);wall('z',4.9375,8.25,9.9,.125,[{a:8.35,b:9.15,kind:'door',h:2.1}]);
  // Concrete columns have their own retained footprints.
- for(const [x,z,w,d]of [[.13,1.13,.46,.55],[.13,7.66,.46,.48],[8.08,.16,.28,.45],[14.05,7.95,.48,.65],[14.08,.25,.25,.5]])wallPart(x,z,w,d,0,2.7,'Retained concrete column');
+ for(const [x,z,w,d]of [[0,1.1,.5,.7],[0,7.75,.5,.5],[8.125,.5,.25,1.5],[14.325,.5,.25,1.5],[14.2,8.125,.5,.7],[8.125,8.95,.25,2.4]])wallPart(x,z,w,d,0,2.7,'Retained concrete column');
+ // Closed service shafts are part of the room footprint, not free floor space.
+ for(const [x,z,w,d]of [[7.865,3.41,.27,.57],[8.385,.375,.27,.75],[10.5,3.86,.34,.27],[2.415,9.765,.27,.27],[4.59,9.765,.57,.27]])wallPart(x,z,w,d,0,2.7,'Service shaft');
  // Full ceilings are visible only inside.
  footprint(shell,mat('#f5f0e6',.95),2.77,.07,ceiling);
  // Balcony rails: only exposed outer edges; glass is retained at walking height.
@@ -102,7 +108,7 @@ export function buildHome(){
  function pendant(x:number,z:number,r=.3){cylinder(x,2.56,z,.007,.28,black,upper);cylinder(x,2.30,z,r,.25,mat('#d6b37b'),upper,r*.25);cylinder(x,2.17,z,r*.83,.018,new T.MeshStandardMaterial({color:'#fff6d0',emissive:'#ffdf9d',emissiveIntensity:1.4}),upper);const light=new T.PointLight('#ffe0b1',5,5,2);light.position.set(x,2.12,z);lights.push(light);root.add(light)}
  function art(x:number,y:number,z:number,w:number,h:number,rot=0,child=false){const g=new T.Group();g.position.set(x,y,z);g.rotation.y=rot;upper.add(g);box(0,0,0,w+.06,h+.06,.035,wood,g);box(0,0,.025,w,h,.015,mat('#e6ddc6'),g);const disk=mesh(new T.CircleGeometry(w*.23,40),mat(child?'#d7b36f':'#a76d54'),g);disk.position.set(-w*.16,h*.13,.037);const disk2=mesh(new T.CircleGeometry(w*.34,40),mat(child?'#9ea980':'#7c8667'),g);disk2.scale.y=.6;disk2.position.set(w*.17,-h*.3,.041)}
  function chair(x:number,z:number,rot=0,color=sage,desk=false){const g=group(x,z,rot);box(0,.47,0,.5,.13,.49,color,g,.075);box(0,.72,-.20,.5,.50,.12,color,g,.07);if(desk){cylinder(0,.25,0,.035,.43,black,g);for(let i=0;i<5;i++){const a=i*Math.PI*2/5,o=box(Math.sin(a)*.12,.07,Math.cos(a)*.12,.035,.035,.28,black,g);o.rotation.y=a;cylinder(Math.sin(a)*.25,.05,Math.cos(a)*.25,.033,.035,black,g)}}else for(const xx of [-.18,.18])for(const zz of [-.17,.17])box(xx,.23,zz,.035,.44,.035,wood,g);rectObstacle(x,z,.55,.58,rot,'Chair');contact(x,z,.8,.8);return g}
- function desk(x:number,z:number,rot=0){const g=group(x,z,rot);box(0,.755,0,1.5,.055,.68,wood,g,.018);for(const xx of [-.66,.66]){box(xx,.37,0,.04,.73,.56,black,g);box(xx,.73,0,.035,.035,.61,black,g)}box(0,1.09,-.18,.62,.36,.035,black,g,.014);box(0,1.09,-.158,.57,.31,.009,mat('#68767a',.35),g);box(0,.89,-.18,.04,.22,.035,black,g);box(0,.798,-.13,.24,.015,.15,black,g);box(0,.796,.15,.4,.018,.14,mat('#a3a5a0'),g,.008);box(.31,.798,.17,.07,.025,.1,black,g,.018);book(-.55,.78,-.10,.21,.026,.29,g,sage);cylinder(.52,.83,-.15,.047,.11,white,g);rectObstacle(x,z,1.5,.68,rot,'Office desk');contact(x,z,1.8,1);return g}
+ function desk(x:number,z:number,rot=0,w=1.5){const g=group(x,z,rot);box(0,.755,0,w,.055,.68,wood,g,.018);for(const xx of [-w/2+.09,w/2-.09]){box(xx,.37,0,.04,.73,.56,black,g);box(xx,.73,0,.035,.035,.61,black,g)}box(0,1.09,-.18,.62,.36,.035,black,g,.014);box(0,1.09,-.158,.57,.31,.009,mat('#68767a',.35),g);box(0,.89,-.18,.04,.22,.035,black,g);box(0,.798,-.13,.24,.015,.15,black,g);box(0,.796,.15,.4,.018,.14,mat('#a3a5a0'),g,.008);box(.31,.798,.17,.07,.025,.1,black,g,.018);book(-w/2+.20,.78,-.10,.21,.026,.29,g,sage);cylinder(.52,.83,-.15,.047,.11,white,g);rectObstacle(x,z,w,.68,rot,'Office desk');contact(x,z,w+.3,1);return g}
  function wardrobe(x:number,z:number,w:number,d:number,rot=0){const g=group(x,z,rot);box(0,1.17,0,w,2.34,d,wood,g,.012);const count=Math.round(w/.55);for(let i=0;i<count;i++){box(-w/2+(i+.5)*w/count,1.19,d/2+.013,w/count-.018,2.25,.025,mat('#c9bea6'),g,.008);box(-w/2+(i+.85)*w/count,1.14,d/2+.038,.012,.32,.016,brass,g)}rectObstacle(x,z,w,d,rot,'Wardrobe');contact(x,z,w+.25,d+.3)}
  function bed(x:number,z:number,w:number,d:number,rot=0,child=false){const g=group(x,z,rot),h=child?.24:.43;
   box(0,h-.12,0,w+.13,.26,d+.12,wood,g,.045);box(0,h+.06,0,w,.24,d,linen,g,.1);box(0,child?.48:.67,-d/2-.045,w+.18,child?.85:1.25,.12,child?wood:sage,g,.04);
@@ -110,7 +116,7 @@ export function buildHome(){
   for(let i=0;i<(child?1:2);i++){const xx=child?0:(i?1:-1)*w*.24;box(xx,h+.23,-d*.31,w*(child?.72:.43),.18,.43,linen,g,.1)}
   box(0,h+.25,d*.36,w+.04,.035,.43,child?mat('#9ba887'):mat('#a1866b'),g,.035);
   if(child){box(-w/2-.035,h+.24,d*.20,.055,.39,d*.6,wood,g,.025);for(const xx of [-w/2,w/2])box(xx,1.25,-d/2,.035,1.3,.035,wood,g);const beam=box(0,1.84,-d/2,w+.1,.04,.04,wood,g);beam.rotation.z=0}
-  rectObstacle(x,z,w+.13,d+.16,rot,child?'Child bed':'Bed');contact(x,z,w+.55,d+.45);return g
+  rectObstacle(x,z,w+.18,d+.21,rot,child?'Child bed':'Bed');contact(x,z,w+.55,d+.45);return g
  }
  function bedside(x:number,z:number){cylinder(x,.25,z,.23,.5,wood);cylinder(x,.52,z,.24,.04,stone);cylinder(x,.63,z,.045,.2,brass);cylinder(x,.80,z,.12,.19,linen,furniture,.09);obstacle(x,z,.48,.48,'Bedside table',true)}
  function sofa(x:number,z:number,w:number,rot=0,color=linen,chaise=false){const g=group(x,z,rot);box(0,.30,0,w,.42,.90,color,g,.12);box(0,.67,-.37,w,.57,.19,color,g,.085);for(const xx of [-w/2+.1,w/2-.1])box(xx,.52,.02,.2,.52,.94,color,g,.085);for(let i=0;i<3;i++)box(-w*.31+i*w*.31,.535,.025,w*.3,.16,.65,color,g,.07);for(const xx of [-w*.29,w*.3]){const p=box(xx,.78,-.21,.45,.40,.16,xx<0?sage:clay,g,.09);p.rotation.z=xx<0?-.16:.12;p.rotation.x=.14}if(chaise){box(w/2-.47,.31,.72,.94,.43,1.15,color,g,.1);box(w/2-.47,.55,.70,.88,.14,1.10,color,g,.065);const v=new T.Vector3(w/2-.47,0,.75).applyAxisAngle(new T.Vector3(0,1,0),rot);rectObstacle(x+v.x,z+v.z,.94,1.1,rot,'Sofa chaise')}
@@ -139,7 +145,7 @@ export function buildHome(){
   mesh(new T.TubeGeometry(curve,18,.012,8,false),bronze,g);return g;
  }
  function grandKitchen(){
-  const x=12.25,z=4.08,w=3.70,d=.68,g=group(x,z);g.name='Kitchen counter';
+  const x=12.43,z=4.105,w=3.34,d=.68,g=group(x,z);g.name='Kitchen counter';
   box(0,.44,0,w,.84,d,walnut,g);box(0,.055,.33,w-.08,.10,.03,black,g);
   for(let i=0;i<6;i++){const xx=-w/2+(i+.5)*w/6;for(let row=0;row<3;row++){box(xx,.24+row*.25,d/2+.012,w/6-.016,.232,.025,ivory,g,.009);box(xx,.345+row*.25,d/2+.029,w/6-.03,.012,.012,mat('#5e594c'),g)}}
   box(0,.91,0,w+.06,.07,d+.04,travertine,g,.025);for(const xx of [-w/2,w/2])box(xx,.49,0,.045,.81,d+.035,travertine,g);
@@ -152,19 +158,19 @@ export function buildHome(){
   for(const yy of [.84,1.50]){box(0,yy,.358,.55,.46,.035,black,towers,.015);box(0,yy-.025,.381,.47,.29,.008,mat('#3b403a',.16),towers);box(0,yy+.14,.397,.43,.018,.028,bronze,towers);for(const xx of [-.16,.16])sphere(xx,yy+.19,.388,.013,bronze,towers)}
   box(-.42,1.34,.379,.012,.85,.025,bronze,towers);box(.43,1.3,.379,.012,.32,.025,bronze,towers);
   rectObstacle(x,z,w+.06,d+.05,0,'Kitchen counter');
-  const tray=group(13.68,4.08);box(0,.96,0,.46,.02,.30,walnut,tray,.035);cylinder(-.12,1.075,0,.075,.22,white,tray);cylinder(.10,1.04,0,.07,.15,clay,tray);vase(10.62,.95,4.05,.075);
+  const tray=group(13.68,4.08);box(0,.96,0,.46,.02,.30,walnut,tray,.035);cylinder(-.12,1.075,0,.075,.22,white,tray);cylinder(.10,1.04,0,.07,.15,clay,tray);vase(14.0,.95,4.27,.075);
   storage(9.1,7.78,1.35,.42,Math.PI,1.0,'Dining sideboard',walnut);art(9.12,1.78,7.99,1.14,.85,Math.PI);vase(9.48,1.04,7.70,.08);
  }
  function grandDining(){
-  const x=11.35,z=6.40,g=group(x,z);g.name='Eight seat dining table';
+  const x=11.35,z=6.18,g=group(x,z);g.name='Eight seat dining table';
   box(0,.76,0,2.80,.075,1.10,walnut,g,.20);
   for(const xx of [-.8,.8]){const leg=cylinder(xx,.37,0,.21,.72,travertine,g);leg.scale.z=1.35}
-  for(const xx of [10.45,11.35,12.25]){chair(xx,5.60,0,linen);chair(xx,7.20,Math.PI,linen)}
-  chair(9.55,6.4,Math.PI/2,linen);chair(13.15,6.4,-Math.PI/2,linen);
+  for(const xx of [10.45,11.35,12.25]){chair(xx,5.50,0,linen);chair(xx,6.86,Math.PI,linen)}
+  chair(9.65,z,Math.PI/2,linen);chair(13.05,z,-Math.PI/2,linen);
   box(0,.807,0,1.25,.012,.33,mat('#c6bc9d'),g,.035);vase(-.35,.82,0,.1,g);vase(.1,.82,0,.075,g);cylinder(.43,.86,0,.065,.085,white,g);
   for(const xx of [-.9,0,.9]){cylinder(xx,.806,-.34,.13,.012,white,g);cylinder(xx,.806,.34,.13,.012,white,g)}
   rectObstacle(x,z,2.8,1.1,0,'Dining table');fixtures.push({name:'Dining table',x,z,w:2.8,d:1.1,rotation:0});contact(x,z,3.1,1.45);
-  for(const xx of [10.75,11.95])pendant(xx,6.4,.24);
+  for(const xx of [10.75,11.95])pendant(xx,z,.24);
  }
  function toilet(x:number,z:number,rot=0,name='WC'){
   const g=group(x,z,rot);g.name=name;
@@ -192,8 +198,8 @@ export function buildHome(){
   rectObstacle(x,z,w,d,rot,'Bathroom vanity');return g;
  }
  function correctedBathrooms(){
-  bathTub(7.10,5.17,1.72,.74,0,'West bath tub');toilet(7.58,3.52,0,'West WC');vanity(7.73,4.36,.66,.50,-Math.PI/2);
-  bathTub(9.26,.39,1.70,.72,0,'East bath tub');toilet(8.62,1.20,Math.PI/2,'East WC');vanity(8.49,1.94,.64,.46,Math.PI/2);
+  bathTub(7.10,5.17,1.72,.74,0,'West bath tub');toilet(7.42,3.52,0,'West WC');vanity(7.70,4.36,.66,.50,-Math.PI/2);
+  bathTub(9.365,.39,1.60,.72,0,'East bath tub');toilet(8.63,1.20,Math.PI/2,'East WC');vanity(8.525,1.94,.64,.46,Math.PI/2);
   for(const [x,z,rot]of [[6.26,4.9,0],[10.14,1.45,Math.PI]]){const g=group(x,z,rot);for(let i=0;i<6;i++)box(0,.75+i*.09,0,.035,.025,.44,bronze,g);box(.04,1.01,0,.035,.42,.32,linen,g,.015)}
  }
  function loungeChair(x:number,z:number,rot:number){
@@ -203,7 +209,7 @@ export function buildHome(){
   rug(3.35,6.4,4.1,2.70);sofa(3.35,5.40,3.15,0,linen);coffee(3.20,6.83,.40);coffee(4.05,6.95,.25);loungeChair(1.46,6.85,Math.PI*.35);
   const media=group(3.75,8.065,Math.PI);box(0,1.31,0,2.31,2.56,.065,travertine,media,.01);for(const xx of [-1.12,1.12])box(xx,1.32,.042,.02,2.40,.015,bronze,media);
   consoleUnit(3.75,7.88,2.30,Math.PI,true);library(.56,7.56,1.20,.34,Math.PI/2);
-  desk(1.24,9.52,Math.PI);chair(1.24,8.61,0,sage,true);storage(2.30,9.55,.45,.60,Math.PI,2.54,'Office tall storage',walnut);
+  desk(1.24,9.52,Math.PI);chair(1.24,8.61,0,sage,true);storage(2.30,9.24,.45,.60,Math.PI,2.54,'Office tall storage',walnut);
   const bridge=group(1.24,9.72,Math.PI);box(0,2.20,0,1.65,.72,.30,walnut,bridge,.015);for(const xx of [-.55,0,.55])box(xx,2.20,.164,.535,.69,.025,ivory,bridge,.009);box(0,1.83,.08,1.60,.018,.022,new T.MeshStandardMaterial({color:'#fff1c8',emissive:'#ffdd9b',emissiveIntensity:1.4}),bridge);
   storage(6.31,6.65,1.35,.26,-Math.PI/2,2.54,'Shallow hall storage');plant(.40,5.10,1.1);lamp(5.72,5.22);plant(.23,9.52,.7);pendant(3.5,6.25,.37);
  }
@@ -233,20 +239,19 @@ export function buildHome(){
  // West living room and east kitchen with dining for eight.
  luxuryLiving();grandKitchen();grandDining();
 
- rug(2.42,2.44,2.7,2.95);bed(2.72,2.24,1.40,2.0);bedside(1.64,1.45);wardrobe(1.55,4.21,2.42,.60,Math.PI);desk(.39,2.75,Math.PI/2);chair(1.10,2.75,-Math.PI/2,sage,true);art(2.64,1.67,1.075,1.10,.74,0);pendant(2,2.75,.28);
+ rug(2.42,2.44,2.7,2.95);bed(2.72,2.24,1.40,2.0);bedside(1.64,1.45);wardrobe(1.55,4.21,2.42,.60,Math.PI);desk(.39,2.30,Math.PI/2,1.20);chair(1.10,2.30,-Math.PI/2,sage,true);art(2.64,1.67,1.075,1.10,.74,0);pendant(2,2.75,.28);
  rug(5.74,1.58,2.65,2.48,mat('#e7ddbd'));bed(7.26,1.65,.95,1.85,0,true);box(4.26,.44,1.30,.40,.83,1.25,wood,furniture,.025);for(let i=0;i<3;i++){box(4.27,.22, .9+i*.4,.35,.27,.31,mat(['#c7b189','#b7be9a','#d1aa8d'][i]),furniture,.04);book(4.49,.73,.9+i*.39,.04,.28,.23,furniture,[sage,clay,white][i])}obstacle(4.26,1.3,.42,1.28,'Toy shelf',true);cylinder(5.55,.30,1.4,.30,.06,wood);cylinder(5.55,.15,1.4,.04,.27,wood);cylinder(5.20,.15,1.88,.18,.30,mat('#b5be98'));sphere(6.23,.21,.55,.24,mat('#d5b48f'),furniture,1,.80,1);sphere(6.23,.53,.55,.13,mat('#d5b48f'));for(const xx of [6.13,6.33])sphere(xx,.63,.55,.055,mat('#d5b48f'));art(7.06,1.49,.08,1.1,.8,0,true);storage(4.34,.30,.58,.52,0,2.5,'Child wardrobe');pendant(5.8,1.6,.3);
  obstacle(5.55,1.4,.6,.6,'Child table',true);obstacle(5.2,1.88,.36,.36,'Child stool',true);
- // East home: master bedroom with a wardrobe and shallow linen storage.
- rug(12.4,1.65,3.15,2.64);bed(13.02,1.51,1.8,2.1,-Math.PI/2);bedside(13.62,.28);wardrobe(12.70,3.27,2.75,.60,Math.PI);art(14.10,1.67,1.5,1.2,.75,-Math.PI/2);plant(10.70,.37,.8);pendant(11.15,1.5,.26);
- storage(10.51,1.5,1.40,.32,Math.PI/2,2.54,'Master linen storage');
+ // The west wall holds storage and leaves both master balcony doors clear.
+ rug(12.4,1.65,3.15,2.64);bed(13.02,1.51,1.8,2.1,-Math.PI/2);bedside(13.62,.28);wardrobe(10.65,1.25,2.40,.60,Math.PI/2);art(14.10,1.67,1.5,1.2,.75,-Math.PI/2);pendant(11.15,1.5,.26);
  correctedBathrooms();
  // Utility room: laundry and a compact WC.
- box(3.05,.46,9.49,.62,.88,.64,white,furniture,.025);const drum=mesh(new T.CylinderGeometry(.215,.215,.04,32),black,furniture);drum.rotation.x=Math.PI/2;drum.position.set(3.05,.44,9.14);const drumGlass=mesh(new T.CylinderGeometry(.16,.16,.046,32),glass,furniture);drumGlass.rotation.x=Math.PI/2;drumGlass.position.copy(drum.position);box(3.08,.94,9.49,.74,.06,.71,wood,furniture);obstacle(3.05,9.49,.68,.69,'Washing machine',true);box(3.70,.74,9.58,.52,.48,.54,wood,furniture,.02);sphere(3.70,1.02,9.58,.21,white,furniture,1,.17,1);obstacle(3.70,9.58,.55,.57,'Utility basin',true);sphere(4.37,.31,9.48,.24,white,furniture,.84,1.1,1.25);sphere(4.37,.58,9.48,.25,white,furniture,.9,.15,1.2);obstacle(4.37,9.48,.48,.65,'Utility toilet',true);
+ box(3.05,.46,9.49,.62,.88,.64,white,furniture,.025);const drum=mesh(new T.CylinderGeometry(.215,.215,.04,32),black,furniture);drum.rotation.x=Math.PI/2;drum.position.set(3.05,.44,9.14);const drumGlass=mesh(new T.CylinderGeometry(.16,.16,.046,32),glass,furniture);drumGlass.rotation.x=Math.PI/2;drumGlass.position.copy(drum.position);box(3.08,.94,9.49,.74,.06,.71,wood,furniture);obstacle(3.05,9.49,.68,.69,'Washing machine',true);box(3.70,.74,9.58,.52,.48,.54,wood,furniture,.02);sphere(3.70,1.02,9.58,.21,white,furniture,1,.17,1);obstacle(3.70,9.58,.55,.57,'Utility basin',true);toilet(4.54,9.22,Math.PI,'Utility WC');
  // Entry storage and the new internal threshold.
  box(5.24,.28,7.99,.44,.50,.92,wood,furniture,.025);obstacle(5.24,7.99,.46,.94,'Entry bench',true);box(5.22,1.60,7.93,.025,.90,.72,mat('#c3cabd',.14,.8),upper);rug(5.67,9.2,.77,.95);rug(7.35,8.8,.74,1.35);box(6.575,.045,8.95,.28,.02,1.20,brass);for(const z of [8.33,9.57])box(6.57,1.075,z,.29,2.15,.038,wood,upper);box(6.57,2.16,8.95,.29,.05,1.28,wood,upper);
  luxuryBalconies();
  // Sheer curtains are kept above the cut plane in the overhead views.
  function curtains(x:number,z:number,width:number,rot=0){const g=new T.Group();g.position.set(x,0,z);g.rotation.y=rot;upper.add(g);box(0,2.47,0,width+.28,.035,.035,black,g);const fabric=new T.MeshStandardMaterial({color:'#f0eadb',roughness:1,transparent:true,opacity:.73,side:T.DoubleSide});for(const side of [-1,1])for(let i=0;i<9;i++){const xx=side*(width/2+.02)-side*i*.045;box(xx,1.27,Math.sin(i*1.1)*.035,.052,2.33,.035,fabric,g,.012)}}
- curtains(5.6,.08,1.8);curtains(12.6,.09,1.8);curtains(.09,3,1.8,Math.PI/2);curtains(.09,6,1.8,Math.PI/2);curtains(14.11,5.95,1.8,Math.PI/2);
+ curtains(5.6,.08,1.8);curtains(12.6,.09,1.8);curtains(.09,3,1.8,Math.PI/2);curtains(.09,6,1.8,Math.PI/2);curtains(14.11,6.1,1.8,Math.PI/2);
  return {root,furniture,upper,ceiling,fixtures,obstacles,lights,textures,polygons:[shell,...balconies.map(b=>b.points)]};
 }
