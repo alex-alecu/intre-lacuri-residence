@@ -59,8 +59,8 @@
   "rooms": [
     {
       "id": "living",
-      "name": "Living & kitchen",
-      "side": "LEFT",
+      "name": "Living",
+      "side": "ARIPA DE VEST",
       "area": 26.38,
       "x": 0,
       "z": 4.7,
@@ -68,8 +68,8 @@
       "d": 5.2,
       "measurement": "6.45 × 5.20 m, less recesses",
       "primary": true,
-      "detail": "Gather & cook",
-      "description": "A soft corner sofa, oak dining table, and warm kitchen.",
+      "detail": "Relaxare și confort",
+      "description": "Canapea generoasă, bibliotecă din nuc și un birou integrat în mobilier.",
       "visit": [
         5.65,
         6.7
@@ -77,8 +77,8 @@
     },
     {
       "id": "master",
-      "name": "Master bedroom",
-      "side": "RIGHT",
+      "name": "Dormitor matrimonial",
+      "side": "ARIPA DE EST",
       "area": 13.95,
       "x": 10.33,
       "z": 0,
@@ -86,8 +86,8 @@
       "d": 3.6,
       "measurement": "3.87 × 3.60 m",
       "primary": true,
-      "detail": "Rest & recharge",
-      "description": "A linen bed, full-height storage, and soft reading light.",
+      "detail": "Odihnă și liniște",
+      "description": "Pat tapițat, dulapuri înalte și lumină caldă pentru lectură.",
       "visit": [
         11.1,
         2.6
@@ -95,8 +95,8 @@
     },
     {
       "id": "daughter",
-      "name": "Daughter’s room",
-      "side": "LEFT",
+      "name": "Camera fetiței",
+      "side": "ARIPA DE VEST",
       "area": 12,
       "x": 4,
       "z": 0,
@@ -104,8 +104,8 @@
       "d": 3,
       "measurement": "4.00 × 3.00 m*",
       "primary": true,
-      "detail": "Play & dream",
-      "description": "A low bed, a reading corner, and space to play.",
+      "detail": "Joacă și povești",
+      "description": "Pat jos, cărți la îndemână și spațiu liber pentru joacă.",
       "visit": [
         5.1,
         2.4
@@ -113,8 +113,8 @@
     },
     {
       "id": "guest",
-      "name": "Guest room & office",
-      "side": "LEFT",
+      "name": "Oaspeți și birou",
+      "side": "ARIPA DE VEST",
       "area": 13.74,
       "x": 0,
       "z": 1,
@@ -122,17 +122,17 @@
       "d": 3.57,
       "measurement": "3.87 × 3.57 m",
       "primary": true,
-      "detail": "Stay & work",
-      "description": "A guest bed and a quiet desk beside the window.",
+      "detail": "Ospitalitate și lucru",
+      "description": "Pat confortabil, birou lângă fereastră și acces direct din hol.",
       "visit": [
-        1.2,
-        3.8
+        3.4,
+        3.7
       ]
     },
     {
-      "id": "lounge",
-      "name": "Family lounge & office",
-      "side": "RIGHT",
+      "id": "kitchen",
+      "name": "Bucătărie și masă",
+      "side": "ARIPA DE EST",
       "area": 26.61,
       "x": 8.25,
       "z": 3.73,
@@ -140,17 +140,17 @@
       "d": 4.28,
       "measurement": "5.95 × 4.28 m + entry recess",
       "primary": true,
-      "detail": "Read & work",
-      "description": "A second desk by the window and a relaxed family lounge.",
+      "detail": "Gătit și mese împreună",
+      "description": "Masă pentru opt persoane, blat generos și depozitare până la tavan.",
       "visit": [
-        9.15,
-        6.7
+        9.25,
+        5.75
       ]
     },
     {
       "id": "bath",
-      "name": "Bathrooms & utility",
-      "side": "BOTH",
+      "name": "Băi și spălătorie",
+      "side": "SPAȚIU COMUN",
       "area": 12.67,
       "x": 6.2,
       "z": 3.13,
@@ -158,8 +158,8 @@
       "d": 2.45,
       "measurement": "1.80 × 2.45 / 1.95 × 2.37 m",
       "primary": true,
-      "detail": "Three wet rooms",
-      "description": "Warm stone, oak vanities, and a separate utility room.",
+      "detail": "Piatră și lemn natural",
+      "description": "Căzi, vase WC suspendate și lavoare cu depozitare integrată.",
       "visit": [
         6.85,
         4.4
@@ -167,8 +167,8 @@
     },
     {
       "id": "bath-right",
-      "name": "Right bathroom",
-      "side": "RIGHT",
+      "name": "Baia de est",
+      "side": "ARIPA DE EST",
       "area": 4.63,
       "x": 8.25,
       "z": 0,
@@ -185,8 +185,8 @@
     },
     {
       "id": "utility",
-      "name": "Utility & WC",
-      "side": "LEFT",
+      "name": "Spălătorie și WC",
+      "side": "ARIPA DE VEST",
       "area": 3.63,
       "x": 2.68,
       "z": 8.25,
@@ -203,8 +203,8 @@
     },
     {
       "id": "hall-left",
-      "name": "Left entry",
-      "side": "LEFT",
+      "name": "Holul de vest",
+      "side": "ARIPA DE VEST",
       "area": 2.57,
       "x": 5.01,
       "z": 8.14,
@@ -221,8 +221,8 @@
     },
     {
       "id": "hall-right",
-      "name": "Right entry",
-      "side": "RIGHT",
+      "name": "Holul de est",
+      "side": "ARIPA DE EST",
       "area": 4.72,
       "x": 6.7,
       "z": 5.83,
@@ -239,8 +239,8 @@
     },
     {
       "id": "connection",
-      "name": "Internal hall connection",
-      "side": "BOTH",
+      "name": "Pasajul interior",
+      "side": "SPAȚIU COMUN",
       "area": 0.3,
       "x": 6.45,
       "z": 8.35,
@@ -248,8 +248,8 @@
       "d": 1.2,
       "measurement": "1.20 × 2.15 m opening",
       "primary": false,
-      "detail": "Proposed opening",
-      "description": "A clear passage between the two original entry halls.",
+      "detail": "Legătura dintre apartamente",
+      "description": "Trecere liberă între cele două holuri de intrare.",
       "visit": [
         5.65,
         8.95
@@ -258,7 +258,7 @@
   ],
   "balconies": [
     {
-      "name": "West balcony",
+      "name": "Balconul de vest",
       "area": 11.57,
       "points": [
         [
@@ -288,7 +288,7 @@
       ]
     },
     {
-      "name": "East balcony",
+      "name": "Balconul de est",
       "area": 11.05,
       "points": [
         [

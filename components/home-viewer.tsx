@@ -1,29 +1,107 @@
 'use client';
-import {useEffect,useRef,useState} from 'react';
-import {ArrowUpRight,Armchair,BedDouble,Blocks,ChevronRight,Compass,DoorOpen,FileText,Footprints,House,Layers3,Maximize,Moon,RotateCcw,Ruler,Sun} from 'lucide-react';
-import {Tabs,TabsList,TabsTrigger} from '@/components/ui/tabs';
+
+import {useEffect, useRef, useState} from 'react';
+import {ArrowUpRight, Armchair, BedDouble, Blocks, ChevronRight, Compass, CookingPot, DoorOpen, FileText, Footprints, House, Layers3, Maximize, Moon, RotateCcw, Sun, X} from 'lucide-react';
+import {Tabs, TabsList, TabsTrigger} from '@/components/ui/tabs';
 import {Switch} from '@/components/ui/switch';
-import {Sheet,SheetContent,SheetTitle,SheetDescription} from '@/components/ui/sheet';
+import {Sheet, SheetClose, SheetContent, SheetTitle, SheetDescription} from '@/components/ui/sheet';
 import type {HomeScene} from '@/lib/home-scene';
 import {rooms} from '@/lib/plan';
 import {sitePath} from '@/lib/site-path';
-const includeSourcePlans = process.env.NEXT_PUBLIC_INCLUDE_SOURCE_PLANS !== 'false';
-export default function Home(){
- const host=useRef<HTMLDivElement>(null),model=useRef<HomeScene|null>(null);
- const [mode,setMode]=useState('overview'),[selected,setSelected]=useState('living'),[furniture,setFurniture]=useState(true),[dimensions,setDimensions]=useState(false),[night,setNight]=useState(false),[notes,setNotes]=useState(false),[ready,setReady]=useState(false),[error,setError]=useState(''),[locked,setLocked]=useState(false),[position,setPosition]=useState({x:5.65,z:9.1,yaw:0});
- useEffect(()=>{let cancelled=false;import('@/lib/home-scene').then(({HomeScene})=>{if(cancelled||!host.current)return;try{model.current=new HomeScene(host.current,{onLock:setLocked,onPosition:setPosition});setReady(true)}catch(e){setError(e instanceof Error?e.message:'The 3D view could not start.')}}).catch(()=>setError('Reload this page to load the 3D files.'));return()=>{cancelled=true;model.current?.dispose();model.current=null}},[]);
- useEffect(()=>{if(!ready)return;type Registry={registerTool:(tool:Record<string,unknown>,options:{signal:AbortSignal})=>void|Promise<void>};const context=(document as Document&{modelContext?:Registry}).modelContext;if(!context?.registerTool)return;const lifecycle=new AbortController();try{void Promise.resolve(context.registerTool({name:'navigate_home_model',title:'View a room',description:'Set the apartment view and move to a room.',inputSchema:{type:'object',properties:{view:{type:'string',enum:['overview','plan','walk']},room:{type:'string',enum:rooms.map(r=>r.id)}},required:['view','room'],additionalProperties:false},annotations:{readOnlyHint:false,untrustedContentHint:false},execute:async(input:unknown)=>{const value=input as {view?:string;room?:string};if(!value||!['overview','plan','walk'].includes(value.view??'')||!rooms.some(r=>r.id===value.room))throw new Error('Select a valid view and room.');setMode(value.view!);setSelected(value.room!);model.current?.setMode(value.view!);model.current?.goToRoom(value.room!);await new Promise<void>(resolve=>requestAnimationFrame(()=>resolve()));return {view:value.view,room:value.room}}},{signal:lifecycle.signal})).catch(()=>{})}catch{}return()=>lifecycle.abort()},[ready]);
- const changeMode=(v:string)=>{setMode(v);model.current?.setMode(v)};
- const selectRoom=(id:string)=>{setSelected(id);model.current?.goToRoom(id)};
- const room=rooms.find(r=>r.id===selected)!;
- return <main className={`home-app ${mode==='walk'?'walk-mode':''}`}><header className="topbar"><a href={sitePath('/')} className="brand"><span className="brand-mark"><House size={21}/></span><span>A32<span className="brand-dot"> / </span> HOME</span></a><div className="project-title">Our connected home <span>Second floor</span></div><button className="plain-button" onClick={()=>setNotes(true)}><FileText size={16}/>Plans & dimensions<ArrowUpRight size={15}/></button></header>
- <div className="workspace"><aside className="room-panel"><div className="panel-heading"><span className="eyebrow">THE APARTMENT</span><h1>A place for<br/>all of us.</h1><p>Two apartments. One family home.</p></div><div className="area-stats"><div><strong>117.79 <small>m²</small></strong><span>Interior · plan area</span></div><div><strong>3</strong><span>Bedrooms</span></div></div><div className="room-list-label"><span>EXPLORE THE ROOMS</span><span>06</span></div><nav aria-label="Rooms" className="room-list">{rooms.filter(r=>r.primary).map((r,i)=><button key={r.id} className={`room-button ${selected===r.id?'selected':''}`} onClick={()=>selectRoom(r.id)}><span className="room-number">0{i+1}</span><span className="room-text"><strong>{r.name}</strong><small>{r.area.toFixed(2)} m² · {r.detail}</small></span><ChevronRight size={16}/></button>)}</nav><div className="connection-note"><DoorOpen size={20}/><div><strong>One connected home</strong><p>A 1.20 m opening joins the entry halls.</p><button onClick={()=>selectRoom('connection')}>View the connection <ArrowUpRight size={13}/></button></div></div><div className="palette"><span className="eyebrow">MATERIAL PALETTE</span><div className="swatches">{['#b28b62','#ddd2bd','#73755c','#b97a62','#353d38'].map(c=><span key={c} style={{background:c}}/>)}</div><p>Natural oak · Linen · Warm stone</p></div></aside>
- <section className="model-area" aria-label="Interactive apartment model"><div ref={host} className="three-host"/><div className="view-top"><Tabs value={mode} onValueChange={v=>changeMode(String(v))}><TabsList className="view-tabs"><TabsTrigger value="overview"><Layers3/>3D overview</TabsTrigger><TabsTrigger value="plan"><Blocks/>Floor plan</TabsTrigger><TabsTrigger value="walk"><Footprints/>Walk inside</TabsTrigger></TabsList></Tabs><div className="view-status"><i/>{ready?'LIVE 3D':'STARTING 3D'}</div></div>
- {error&&<div className="model-error"><h2>The 3D view is unavailable.</h2><p>{error}</p><p>This view needs WebGL 2.</p>{includeSourcePlans&&<a href={sitePath('/plans/survey.pdf')} target="_blank" rel="noreferrer">Open the survey plan</a>}</div>}
- <div className="model-caption"><span className="eyebrow">{mode==='walk'?'AT EYE LEVEL':mode==='plan'?'MEASURED LAYOUT':'YOUR HOME, IN PERSPECTIVE'}</span><h2>{mode==='walk'?'Come on in.':mode==='plan'?'Every room, connected.':'Room to live together.'}</h2><p>{mode==='walk'?'W A S D to move · Mouse to look · Shift to move faster':mode==='plan'?'One model unit equals one metre.':'Drag to rotate · Scroll to zoom'}</p></div>
- <div className="right-tools"><button onClick={()=>{setNight(!night);model.current?.setNight(!night)}} aria-label={night?'Use daylight':'Use evening light'} title="Change light">{night?<Moon/>:<Sun/>}</button><button onClick={()=>model.current?.reset()} aria-label="Reset view" title="Reset view"><RotateCcw/></button><button onClick={()=>{const el=host.current?.parentElement;if(document.fullscreenElement)document.exitFullscreen();else el?.requestFullscreen?.().catch(()=>{})}} aria-label="Full screen" title="Full screen"><Maximize/></button></div><div className="north"><Compass size={32}/><span>N</span></div>
- {mode==='walk'&&!locked&&ready&&<button className="enter-walk" onClick={()=>model.current?.lock()}><Footprints size={20}/>Click to walk<span>Esc releases the mouse</span></button>}{mode==='walk'&&locked&&<div className="crosshair"/>}{mode==='walk'&&<div className="touch-controls" aria-label="Movement controls">{[['ArrowLeft','←'],['ArrowUp','↑'],['ArrowDown','↓'],['ArrowRight','→']].map(([key,label])=><button key={key} onPointerDown={e=>{e.currentTarget.setPointerCapture(e.pointerId);model.current?.setKey(key,true)}} onPointerUp={()=>model.current?.setKey(key,false)} onPointerCancel={()=>model.current?.setKey(key,false)} aria-label={`Move ${key.slice(5).toLowerCase()}`}>{label}</button>)}</div>}
- <div className="view-bottom"><div className="selected-card"><span className="selected-icon">{selected==='master'||selected==='daughter'?<BedDouble/>:<Armchair/>}</span><div><span className="eyebrow">{room.side} APARTMENT</span><strong>{room.name}</strong><p>{room.description}</p></div><span className="selected-area">{room.area.toFixed(2)}<small>m²</small></span></div><div className="mini-map"><span>YOU ARE HERE</span><svg viewBox="-1 -1 16.2 12.1" aria-label="Apartment map">{rooms.filter(r=>r.id!=='connection').map(r=><rect key={r.id} x={r.x} y={r.z} width={r.w} height={r.d} fill={r.id===selected?'#c3a47b':'#e2ded4'} stroke="#fff" strokeWidth=".1"/>)}<circle cx={position.x} cy={position.z} r=".26" fill="#3f5847" stroke="white" strokeWidth=".12"/></svg></div></div>
- <footer className="model-footer"><span>1 unit = 1 metre</span><div><label><Switch checked={furniture} onCheckedChange={v=>{setFurniture(v);model.current?.setFurniture(v)}} aria-label="Show furniture"/>Furniture</label><label><Switch checked={dimensions} onCheckedChange={v=>{setDimensions(v);model.current?.setDimensions(v)}} aria-label="Show dimensions"/>Dimensions</label></div><button onClick={()=>setNotes(true)}><Ruler size={14}/>Source notes</button></footer></section></div>
- <Sheet open={notes} onOpenChange={setNotes}><SheetContent className="source-sheet"><SheetTitle>Plans & dimensions</SheetTitle><SheetDescription>Source values and model assumptions.</SheetDescription><div className="source-body"><h3>Source plans</h3><p>The PDF labels the homes 11 and 12. The building image labels them 6 and 7. Your request labels them 12 and 13. The model uses the matching left and right layouts.</p><div className="source-links">{includeSourcePlans&&<><a href={sitePath('/plans/survey.pdf')} target="_blank" rel="noreferrer">Open the two survey pages <ArrowUpRight size={16}/></a><a href={sitePath('/plans/building.png')} target="_blank" rel="noreferrer">Open the building plan <ArrowUpRight size={16}/></a></>}<a href={sitePath('/measurements.json')} download>Download the dimensions <ArrowUpRight size={16}/></a></div>{includeSourcePlans&&<img src={sitePath('/plans/building.png')} alt="Building plan with the two target apartments at the top"/>}<h3>Printed dimensions</h3><table><thead><tr><th>Room</th><th>Clear size</th><th>Plan area</th></tr></thead><tbody>{rooms.filter(r=>r.primary).map(r=><tr key={r.id}><td>{r.name}</td><td>{r.measurement}</td><td>{r.area.toFixed(2)} m²</td></tr>)}</tbody></table><p>*The daughter’s room is 3.00 m deep in the image and 3.05 m in the PDF. The model uses 3.00 m. This matches the 12.00 m² room label.</p><h3>Design changes</h3><p>A new partition closes the guest bedroom. Its door is 0.90 m wide. The new hall opening is 1.20 m wide and 2.15 m high. It joins the original entry halls.</p><p>The opening is a proposal. A structural engineer must confirm the wall construction before any site work. The model keeps the reinforced columns.</p><h3>Model assumptions</h3><p>Wall height is 2.70 m. The +6.40 m mark is a floor elevation. It is not a room height. Most glazed doors are 2.20 m high. The bathroom sill is 1.00 m high. Other window details and furniture sizes are design values.</p><p>Interior area: 65.74 + 52.05 = 117.79 m². Balconies: 11.57 + 11.05 = 22.62 m². Areas are copied from plan labels. Some wall positions are traced. This model is not a construction survey.</p></div></SheetContent></Sheet></main>
+
+export default function Home() {
+  const host = useRef<HTMLDivElement>(null);
+  const model = useRef<HomeScene|null>(null);
+  const [mode, setMode] = useState('overview');
+  const [selected, setSelected] = useState('living');
+  const [furniture, setFurniture] = useState(true);
+  const [night, setNight] = useState(false);
+  const [notes, setNotes] = useState(false);
+  const [ready, setReady] = useState(false);
+  const [error, setError] = useState('');
+  const [locked, setLocked] = useState(false);
+  const [position, setPosition] = useState({x:5.72, z:9.12, yaw:0});
+
+  useEffect(() => {
+    let cancelled = false;
+    import('@/lib/home-scene').then(({HomeScene}) => {
+      if (cancelled || !host.current) return;
+      try {
+        model.current = new HomeScene(host.current, {onLock:setLocked, onPosition:setPosition});
+        setReady(true);
+      } catch (cause) {
+        console.error(cause);
+        setError('Modelul nu a putut porni. Reîncarcă pagina și verifică dacă accelerarea grafică este activă.');
+      }
+    }).catch(() => setError('Fișierele modelului nu au putut fi încărcate. Reîncarcă pagina.'));
+    return () => { cancelled = true; model.current?.dispose(); model.current = null; };
+  }, []);
+
+  useEffect(() => {
+    if (!ready) return;
+    type Registry = {registerTool:(tool:Record<string,unknown>, options:{signal:AbortSignal})=>void|Promise<void>};
+    const context = (document as Document & {modelContext?:Registry}).modelContext;
+    if (!context?.registerTool) return;
+    const lifecycle = new AbortController();
+    try {
+      void Promise.resolve(context.registerTool({
+        name:'navigate_home_model', title:'Explorează o cameră',
+        description:'Alege perspectiva și mută camera în încăperea selectată.',
+        inputSchema:{type:'object', properties:{view:{type:'string', enum:['overview','plan','walk']}, room:{type:'string', enum:rooms.map(r=>r.id)}}, required:['view','room'], additionalProperties:false},
+        annotations:{readOnlyHint:false, untrustedContentHint:false},
+        execute:async (input:unknown) => {
+          const value = input as {view?:string;room?:string};
+          if (!value || !['overview','plan','walk'].includes(value.view??'') || !rooms.some(r=>r.id===value.room)) throw new Error('Alege o perspectivă și o cameră valide.');
+          setMode(value.view!); setSelected(value.room!);
+          model.current?.setMode(value.view!); model.current?.goToRoom(value.room!);
+          await new Promise<void>(resolve=>requestAnimationFrame(()=>resolve()));
+          return {view:value.view, room:value.room};
+        },
+      }, {signal:lifecycle.signal})).catch(()=>{});
+    } catch {}
+    return ()=>lifecycle.abort();
+  }, [ready]);
+
+  const changeMode = (value:string) => {setMode(value); model.current?.setMode(value);};
+  const selectRoom = (id:string) => {setSelected(id); model.current?.goToRoom(id);};
+  const room = rooms.find(r=>r.id===selected)!;
+  const roomIcon = selected==='kitchen' ? <CookingPot/> : ['master','daughter','guest'].includes(selected) ? <BedDouble/> : <Armchair/>;
+
+  return <main className={`home-app ${mode==='walk'?'walk-mode':''}`}>
+    <header className="topbar">
+      <a href={sitePath('/')} className="brand" aria-label="Acasă"><span className="brand-mark"><House size={21}/></span><span>A32<span className="brand-dot"> / </span>ACASĂ</span></a>
+      <div className="project-title">Acasă, împreună <span>Etajul 2</span></div>
+      <button className="plain-button" onClick={()=>setNotes(true)}><FileText size={16}/>Despre amenajare<ArrowUpRight size={15}/></button>
+    </header>
+    <div className="workspace">
+      <aside className="room-panel">
+        <div className="panel-heading"><span className="eyebrow">LOCUINȚA NOASTRĂ</span><h1>Loc pentru<br/>fiecare dintre noi.</h1><p>Materiale naturale. Confort. Liniște.</p></div>
+        <div className="area-stats"><div><strong>3</strong><span>Dormitoare</span></div><div><strong>2</strong><span>Birouri</span></div><div><strong>8</strong><span>Locuri la masă</span></div></div>
+        <div className="room-list-label"><span>EXPLOREAZĂ LOCUINȚA</span></div>
+        <nav aria-label="Încăperi" className="room-list">{rooms.filter(r=>r.primary).map((r,i)=><button key={r.id} className={`room-button ${selected===r.id?'selected':''}`} onClick={()=>selectRoom(r.id)}><span className="room-number">{String(i+1).padStart(2,'0')}</span><span className="room-text"><strong>{r.name}</strong><small>{r.detail}</small></span><ChevronRight size={16}/></button>)}</nav>
+        <div className="connection-note"><DoorOpen size={20}/><div><strong>O singură locuință</strong><p>Cele două holuri sunt unite printr-un pasaj interior.</p><button onClick={()=>selectRoom('connection')}>Vezi legătura <ArrowUpRight size={13}/></button></div></div>
+        <div className="palette"><span className="eyebrow">MATERIALE ȘI FINISAJE</span><div className="swatches">{[['#79563d','Nuc'],['#dccdb5','Travertin'],['#e8dfcd','In'],['#858870','Verde măsliniu'],['#ab8c58','Alamă']].map(([color,name])=><span key={name} style={{background:color}} title={name}/>)}</div><p>Nuc · Travertin · In · Alamă</p></div>
+      </aside>
+      <section className="model-area" aria-label="Model interactiv al locuinței">
+        <div ref={host} className="three-host"/>
+        <div className="view-top"><Tabs value={mode} onValueChange={v=>changeMode(String(v))}><TabsList className="view-tabs"><TabsTrigger value="overview"><Layers3/>Vedere 3D</TabsTrigger><TabsTrigger value="plan"><Blocks/>Plan</TabsTrigger><TabsTrigger value="walk"><Footprints/>Plimbare</TabsTrigger></TabsList></Tabs><div className="view-status"><i/>{ready?'MODEL 3D':'SE ÎNCARCĂ'}</div></div>
+        {error&&<div className="model-error"><h2>Vederea 3D nu este disponibilă.</h2><p>{error}</p><p>Este necesar un browser compatibil cu WebGL 2.</p></div>}
+        <div className="model-caption"><span className="eyebrow">{mode==='walk'?'LA NIVELUL PRIVIRII':mode==='plan'?'VEDERE DE SUS':'ACASĂ, DIN ORICE UNGHI'}</span><h2>{mode==='walk'?'Intră și descoperă.':mode==='plan'?'Totul se leagă.':'Spațiu pentru viața noastră.'}</h2><p>{mode==='walk'?'W A S D: deplasare · Mouse: privire · Shift: pas rapid':mode==='plan'?'Derulează pentru apropiere sau depărtare.':'Trage pentru rotire · Derulează pentru apropiere'}</p></div>
+        <div className="right-tools"><button onClick={()=>{setNight(!night);model.current?.setNight(!night);}} aria-label={night?'Lumină de zi':'Lumină de seară'} title={night?'Lumină de zi':'Lumină de seară'}>{night?<Moon/>:<Sun/>}</button><button onClick={()=>model.current?.reset()} aria-label="Resetează perspectiva" title="Resetează perspectiva"><RotateCcw/></button><button onClick={()=>{const el=host.current?.parentElement;if(document.fullscreenElement)document.exitFullscreen();else el?.requestFullscreen?.().catch(()=>{});}} aria-label="Ecran complet" title="Ecran complet"><Maximize/></button></div>
+        <div className="north"><Compass size={32}/><span>N</span></div>
+        {mode==='walk'&&!locked&&ready&&<button className="enter-walk" onClick={()=>model.current?.lock()}><Footprints size={20}/>Începe plimbarea<span>Esc eliberează mouse-ul</span></button>}
+        {mode==='walk'&&locked&&<div className="crosshair"/>}
+        {mode==='walk'&&<div className="touch-controls" aria-label="Comenzi de deplasare">{[['ArrowLeft','←','Stânga'],['ArrowUp','↑','Înainte'],['ArrowDown','↓','Înapoi'],['ArrowRight','→','Dreapta']].map(([key,label,name])=><button key={key} onPointerDown={e=>{e.currentTarget.setPointerCapture(e.pointerId);model.current?.setKey(key,true);}} onPointerUp={()=>model.current?.setKey(key,false)} onPointerCancel={()=>model.current?.setKey(key,false)} aria-label={name}>{label}</button>)}</div>}
+        <div className="view-bottom"><div className="selected-card"><span className="selected-icon">{roomIcon}</span><div><span className="eyebrow">{room.side}</span><strong>{room.name}</strong><p>{room.description}</p></div></div><div className="mini-map"><span>EȘTI AICI</span><svg viewBox="-1 -1 16.2 12.1" aria-label="Harta locuinței">{rooms.filter(r=>r.id!=='connection').map(r=><rect key={r.id} x={r.x} y={r.z} width={r.w} height={r.d} fill={r.id===selected?'#bd9d75':'#e2ded4'} stroke="#fff" strokeWidth=".1"/>)}<circle cx={position.x} cy={position.z} r=".26" fill="#3f5847" stroke="white" strokeWidth=".12"/></svg></div></div>
+        <footer className="model-footer"><span>Acasă, împreună</span><div><label><Switch checked={furniture} onCheckedChange={v=>{setFurniture(v);model.current?.setFurniture(v);}} aria-label="Arată mobilierul"/>Mobilier</label></div><button onClick={()=>setNotes(true)}><FileText size={14}/>Detalii</button></footer>
+      </section>
+    </div>
+    <Sheet open={notes} onOpenChange={setNotes}><SheetContent className="source-sheet" showCloseButton={false}><SheetClose className="notes-close" aria-label="Închide"><X size={20}/></SheetClose><SheetTitle>Despre amenajare</SheetTitle><SheetDescription>O locuință gândită pentru întreaga familie.</SheetDescription><div className="source-body">
+      <h3>Bucătărie și loc de luat masa</h3><p>Bucătăria spațioasă ocupă fostul salon din apartamentul din dreapta. Masa pentru opt persoane este înconjurată de scaune tapițate. Dulapurile până la tavan, sertarele adânci și electrocasnicele integrate păstrează blatul liber.</p>
+      <h3>Un living pentru relaxare</h3><p>Canapeaua generoasă, fotoliul și mesele din piatră creează un loc confortabil pentru familie. Biblioteca și mobilierul realizat pe comandă folosesc pereții disponibili. Al doilea birou se află în locul fostei bucătării, integrat în mobilier.</p>
+      <h3>Balcoane verzi</h3><p>Băncile cu spațiu de depozitare, pernele de exterior, jardinierele și panourile cu plante transformă balcoanele în locuri de relaxare. Mobilierul este așezat lângă clădire, iar traseele către uși rămân libere.</p>
+      <h3>Uși și băi</h3><p>Ușa camerei de oaspeți este pe peretele dinspre hol, aproape de deschiderea din planul etajului. Golul nedorit din peretele băii a fost închis. Căzile, lavoarele și vasele WC sunt orientate conform planurilor.</p>
+      <h3>Despre model</h3><p>Modelul urmărește conturul și pozițiile pereților din documentele furnizate. Unele detalii și înălțimea camerelor sunt estimări. Deschiderea dintre apartamente este o propunere și trebuie verificată de un inginer structurist înainte de lucrări.</p>
+    </div></SheetContent></Sheet>
+  </main>;
 }

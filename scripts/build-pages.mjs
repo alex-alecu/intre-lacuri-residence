@@ -25,7 +25,9 @@ for (const file of ['measurements.json', 'home-icon.svg']) {
 }
 assert.ok(!existsSync(resolve(output, 'plans')), 'The original plan documents are excluded.');
 const html = readFileSync(resolve(output, 'index.html'), 'utf8');
-assert.ok(html.includes('Our connected home'), 'The exported home page is present.');
+assert.ok(html.includes('Acasă, împreună'), 'The Romanian home page is present.');
+assert.ok(html.includes('lang="ro"'), 'The document language is Romanian.');
+for (const phrase of ['Our connected home', 'Walk inside', 'Furniture', 'Show dimensions', 'Plans &amp; dimensions']) assert.ok(!html.includes(phrase), `Old interface text is absent: ${phrase}`);
 assert.ok(html.includes(`${basePath}/home-icon.svg`), 'The icon uses the repository path.');
 let references = 0;
 for (const [, raw] of html.matchAll(/(?:src|href)="([^"]+)"/g)) {
