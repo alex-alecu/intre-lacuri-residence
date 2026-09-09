@@ -12,6 +12,7 @@
     "start": "wrangler dev --config dist/server/wrangler.json",
     "lint": "oxlint",
     "test:model": "node scripts/verify-model.mjs",
+    "test:touch": "node scripts/verify-touch.mjs",
     "check": "tsc --noEmit",
     "format": "oxfmt"
   },

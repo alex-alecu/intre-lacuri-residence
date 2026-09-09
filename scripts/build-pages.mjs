@@ -27,6 +27,8 @@ assert.ok(!existsSync(resolve(output, 'plans')), 'The original plan documents ar
 const html = readFileSync(resolve(output, 'index.html'), 'utf8');
 assert.ok(html.includes('Acasă, împreună'), 'The Romanian home page is present.');
 assert.ok(html.includes('lang="ro"'), 'The document language is Romanian.');
+assert.ok(html.includes('viewport-fit=cover'), 'The viewport uses iPad safe areas.');
+assert.ok(html.includes('room-menu-trigger'), 'The compact room menu is present.');
 for (const phrase of ['Our connected home', 'Walk inside', 'Furniture', 'Show dimensions', 'Plans &amp; dimensions']) assert.ok(!html.includes(phrase), `Old interface text is absent: ${phrase}`);
 assert.ok(html.includes(`${basePath}/home-icon.svg`), 'The icon uses the repository path.');
 let references = 0;

@@ -29,6 +29,8 @@ jobs:
         run: npm run check
       - name: Check the model
         run: npm run test:model
+      - name: Check touch controls
+        run: npm run test:touch
       - name: Build the static site
         run: npm run build:pages
       - name: Upload the site

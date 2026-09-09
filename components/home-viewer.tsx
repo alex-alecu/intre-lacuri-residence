@@ -1,7 +1,7 @@
 'use client';
 
 import {useEffect, useRef, useState} from 'react';
-import {ArrowUpRight, Armchair, BedDouble, Blocks, ChevronRight, Compass, CookingPot, DoorOpen, FileText, Footprints, House, Layers3, Maximize, Moon, RotateCcw, Sun, X} from 'lucide-react';
+import {ArrowUpRight, Armchair, BedDouble, Blocks, ChevronRight, Compass, CookingPot, DoorOpen, FileText, Footprints, House, Layers3, Maximize, Minimize, Moon, Pause, RotateCcw, Sun, X} from 'lucide-react';
 import {Tabs, TabsList, TabsTrigger} from '@/components/ui/tabs';
 import {Switch} from '@/components/ui/switch';
 import {Sheet, SheetClose, SheetContent, SheetTitle, SheetDescription} from '@/components/ui/sheet';
@@ -17,17 +17,30 @@ export default function Home() {
   const [furniture, setFurniture] = useState(true);
   const [night, setNight] = useState(false);
   const [notes, setNotes] = useState(false);
+  const [roomsOpen, setRoomsOpen] = useState(false);
+  const [touch, setTouch] = useState(false);
+  const [expanded, setExpanded] = useState(false);
+  const [contextLost, setContextLost] = useState(false);
   const [ready, setReady] = useState(false);
   const [error, setError] = useState('');
   const [locked, setLocked] = useState(false);
   const [position, setPosition] = useState({x:5.72, z:9.12, yaw:0});
 
   useEffect(() => {
+    setTouch(navigator.maxTouchPoints>0);
+    const onFullscreen = () => setExpanded(Boolean(document.fullscreenElement));
+    const onEscape = (event:KeyboardEvent) => {if(event.key==='Escape'&&!document.fullscreenElement)setExpanded(false);};
+    document.addEventListener('fullscreenchange',onFullscreen);
+    window.addEventListener('keydown',onEscape);
+    return () => {document.removeEventListener('fullscreenchange',onFullscreen);window.removeEventListener('keydown',onEscape);};
+  }, []);
+
+  useEffect(() => {
     let cancelled = false;
     import('@/lib/home-scene').then(({HomeScene}) => {
       if (cancelled || !host.current) return;
       try {
-        model.current = new HomeScene(host.current, {onLock:setLocked, onPosition:setPosition});
+        model.current = new HomeScene(host.current, {onLock:setLocked, onPosition:setPosition, onContextChange:setContextLost});
         setReady(true);
       } catch (cause) {
         console.error(cause);
@@ -63,39 +76,55 @@ export default function Home() {
   }, [ready]);
 
   const changeMode = (value:string) => {setMode(value); model.current?.setMode(value);};
-  const selectRoom = (id:string) => {setSelected(id); model.current?.goToRoom(id);};
+  const selectRoom = (id:string) => {setSelected(id); model.current?.goToRoom(id);setRoomsOpen(false);};
+  const openNotes = () => {model.current?.unlock();setNotes(true);};
+  const changeRoomsOpen = (open:boolean) => {if(open)model.current?.unlock();setRoomsOpen(open);};
+  const toggleFullscreen = async () => {
+    model.current?.clearKeys();
+    if(document.fullscreenElement){await document.exitFullscreen().catch(()=>{});setExpanded(false);return;}
+    if(expanded){setExpanded(false);return;}
+    setExpanded(true);
+    if(document.fullscreenEnabled&&document.documentElement.requestFullscreen){
+      try{await document.documentElement.requestFullscreen();}catch{/* The expanded layout remains available. */}
+    }
+  };
   const room = rooms.find(r=>r.id===selected)!;
   const roomIcon = selected==='kitchen' ? <CookingPot/> : ['master','daughter','guest'].includes(selected) ? <BedDouble/> : <Armchair/>;
+  const roomList = () => <nav aria-label="Încăperi" className="room-list">{rooms.filter(r=>r.primary).map((r,i)=><button key={r.id} className={`room-button ${selected===r.id?'selected':''}`} aria-current={selected===r.id?'location':undefined} onClick={()=>selectRoom(r.id)}><span className="room-number">{String(i+1).padStart(2,'0')}</span><span className="room-text"><strong>{r.name}</strong><small>{r.detail}</small></span><ChevronRight size={16}/></button>)}</nav>;
+  const instructions = touch
+    ? mode==='walk'?'Ține apăsate săgețile pentru deplasare. Trage pe imagine pentru privire.':mode==='plan'?'Trage cu un deget. Apropie sau depărtează două degete pentru zoom.':'Un deget: rotire · Două degete: zoom și deplasare'
+    : mode==='walk'?'W A S D: deplasare · Mouse: privire · Shift: pas rapid':mode==='plan'?'Derulează pentru apropiere sau depărtare.':'Trage pentru rotire · Derulează pentru apropiere';
 
-  return <main className={`home-app ${mode==='walk'?'walk-mode':''}`}>
+  return <main className={`home-app ${mode==='walk'?'walk-mode':''} ${touch?'touch-device':''} ${expanded?'expanded':''}`}>
     <header className="topbar">
       <a href={sitePath('/')} className="brand" aria-label="Acasă"><span className="brand-mark"><House size={21}/></span><span>A32<span className="brand-dot"> / </span>ACASĂ</span></a>
       <div className="project-title">Acasă, împreună <span>Etajul 2</span></div>
-      <button className="plain-button" onClick={()=>setNotes(true)}><FileText size={16}/>Despre amenajare<ArrowUpRight size={15}/></button>
+      <div className="header-actions"><button className="room-menu-trigger" aria-haspopup="dialog" aria-expanded={roomsOpen} onClick={()=>changeRoomsOpen(true)}><DoorOpen/>Încăperi</button><button className="plain-button" onClick={openNotes} aria-label="Despre amenajare"><FileText size={16}/><span>Despre amenajare</span><ArrowUpRight size={15}/></button></div>
     </header>
     <div className="workspace">
       <aside className="room-panel">
         <div className="panel-heading"><span className="eyebrow">LOCUINȚA NOASTRĂ</span><h1>Loc pentru<br/>fiecare dintre noi.</h1><p>Materiale naturale. Confort. Liniște.</p></div>
         <div className="area-stats"><div><strong>3</strong><span>Dormitoare</span></div><div><strong>2</strong><span>Birouri</span></div><div><strong>8</strong><span>Locuri la masă</span></div></div>
         <div className="room-list-label"><span>EXPLOREAZĂ LOCUINȚA</span></div>
-        <nav aria-label="Încăperi" className="room-list">{rooms.filter(r=>r.primary).map((r,i)=><button key={r.id} className={`room-button ${selected===r.id?'selected':''}`} onClick={()=>selectRoom(r.id)}><span className="room-number">{String(i+1).padStart(2,'0')}</span><span className="room-text"><strong>{r.name}</strong><small>{r.detail}</small></span><ChevronRight size={16}/></button>)}</nav>
+        {roomList()}
         <div className="connection-note"><DoorOpen size={20}/><div><strong>O singură locuință</strong><p>Cele două holuri sunt unite printr-un pasaj interior.</p><button onClick={()=>selectRoom('connection')}>Vezi legătura <ArrowUpRight size={13}/></button></div></div>
         <div className="palette"><span className="eyebrow">MATERIALE ȘI FINISAJE</span><div className="swatches">{[['#79563d','Nuc'],['#dccdb5','Travertin'],['#e8dfcd','In'],['#858870','Verde măsliniu'],['#ab8c58','Alamă']].map(([color,name])=><span key={name} style={{background:color}} title={name}/>)}</div><p>Nuc · Travertin · In · Alamă</p></div>
       </aside>
       <section className="model-area" aria-label="Model interactiv al locuinței">
         <div ref={host} className="three-host"/>
         <div className="view-top"><Tabs value={mode} onValueChange={v=>changeMode(String(v))}><TabsList className="view-tabs"><TabsTrigger value="overview"><Layers3/>Vedere 3D</TabsTrigger><TabsTrigger value="plan"><Blocks/>Plan</TabsTrigger><TabsTrigger value="walk"><Footprints/>Plimbare</TabsTrigger></TabsList></Tabs><div className="view-status"><i/>{ready?'MODEL 3D':'SE ÎNCARCĂ'}</div></div>
-        {error&&<div className="model-error"><h2>Vederea 3D nu este disponibilă.</h2><p>{error}</p><p>Este necesar un browser compatibil cu WebGL 2.</p></div>}
-        <div className="model-caption"><span className="eyebrow">{mode==='walk'?'LA NIVELUL PRIVIRII':mode==='plan'?'VEDERE DE SUS':'ACASĂ, DIN ORICE UNGHI'}</span><h2>{mode==='walk'?'Intră și descoperă.':mode==='plan'?'Totul se leagă.':'Spațiu pentru viața noastră.'}</h2><p>{mode==='walk'?'W A S D: deplasare · Mouse: privire · Shift: pas rapid':mode==='plan'?'Derulează pentru apropiere sau depărtare.':'Trage pentru rotire · Derulează pentru apropiere'}</p></div>
-        <div className="right-tools"><button onClick={()=>{setNight(!night);model.current?.setNight(!night);}} aria-label={night?'Lumină de zi':'Lumină de seară'} title={night?'Lumină de zi':'Lumină de seară'}>{night?<Moon/>:<Sun/>}</button><button onClick={()=>model.current?.reset()} aria-label="Resetează perspectiva" title="Resetează perspectiva"><RotateCcw/></button><button onClick={()=>{const el=host.current?.parentElement;if(document.fullscreenElement)document.exitFullscreen();else el?.requestFullscreen?.().catch(()=>{});}} aria-label="Ecran complet" title="Ecran complet"><Maximize/></button></div>
+        {(error||contextLost)&&<div className="model-error" role="alert"><h2>Vederea 3D nu este disponibilă.</h2><p>{contextLost?'Modelul se restabilește. Dacă nu reapare, reîncarcă pagina.':error}</p><button onClick={()=>window.location.reload()}>Reîncarcă pagina</button></div>}
+        <div className="model-caption"><span className="eyebrow">{mode==='walk'?'LA NIVELUL PRIVIRII':mode==='plan'?'VEDERE DE SUS':'ACASĂ, DIN ORICE UNGHI'}</span><h2>{mode==='walk'?'Intră și descoperă.':mode==='plan'?'Totul se leagă.':'Spațiu pentru viața noastră.'}</h2><p>{instructions}</p></div>
+        <div className="right-tools"><button onClick={()=>{setNight(!night);model.current?.setNight(!night);}} aria-label={night?'Lumină de zi':'Lumină de seară'} title={night?'Lumină de zi':'Lumină de seară'}>{night?<Moon/>:<Sun/>}</button><button onClick={()=>model.current?.reset()} aria-label="Resetează perspectiva" title="Resetează perspectiva"><RotateCcw/></button><button onClick={toggleFullscreen} aria-label={expanded?'Ieși din ecranul complet':'Ecran complet'} title={expanded?'Ieși din ecranul complet':'Ecran complet'} aria-pressed={expanded}>{expanded?<Minimize/>:<Maximize/>}</button></div>
         <div className="north"><Compass size={32}/><span>N</span></div>
-        {mode==='walk'&&!locked&&ready&&<button className="enter-walk" onClick={()=>model.current?.lock()}><Footprints size={20}/>Începe plimbarea<span>Esc eliberează mouse-ul</span></button>}
+        {mode==='walk'&&!locked&&ready&&!contextLost&&<button className="enter-walk" onClick={()=>model.current?.lock()}><Footprints size={20}/>Începe plimbarea<span>{touch?'Folosește săgețile și trage pe imagine.':'Esc eliberează mouse-ul'}</span></button>}
         {mode==='walk'&&locked&&<div className="crosshair"/>}
-        {mode==='walk'&&<div className="touch-controls" aria-label="Comenzi de deplasare">{[['ArrowLeft','←','Stânga'],['ArrowUp','↑','Înainte'],['ArrowDown','↓','Înapoi'],['ArrowRight','→','Dreapta']].map(([key,label,name])=><button key={key} onPointerDown={e=>{e.currentTarget.setPointerCapture(e.pointerId);model.current?.setKey(key,true);}} onPointerUp={()=>model.current?.setKey(key,false)} onPointerCancel={()=>model.current?.setKey(key,false)} aria-label={name}>{label}</button>)}</div>}
+        {mode==='walk'&&locked&&<><div className="touch-controls" role="group" aria-label="Comenzi de deplasare">{[['ArrowLeft','←','Stânga'],['ArrowUp','↑','Înainte'],['ArrowDown','↓','Înapoi'],['ArrowRight','→','Dreapta']].map(([key,label,name])=><button key={key} data-direction={key} onContextMenu={e=>e.preventDefault()} onPointerDown={e=>{e.preventDefault();e.currentTarget.setPointerCapture(e.pointerId);model.current?.setTouchKey(e.pointerId,key);}} onPointerUp={e=>model.current?.setTouchKey(e.pointerId,null)} onPointerCancel={e=>model.current?.setTouchKey(e.pointerId,null)} onLostPointerCapture={e=>model.current?.setTouchKey(e.pointerId,null)} aria-label={name}>{label}</button>)}</div><button className="pause-walk" onClick={()=>model.current?.unlock()}><Pause/>Pauză</button></>}
         <div className="view-bottom"><div className="selected-card"><span className="selected-icon">{roomIcon}</span><div><span className="eyebrow">{room.side}</span><strong>{room.name}</strong><p>{room.description}</p></div></div><div className="mini-map"><span>EȘTI AICI</span><svg viewBox="-1 -1 16.2 12.1" aria-label="Harta locuinței">{rooms.filter(r=>r.id!=='connection').map(r=><rect key={r.id} x={r.x} y={r.z} width={r.w} height={r.d} fill={r.id===selected?'#bd9d75':'#e2ded4'} stroke="#fff" strokeWidth=".1"/>)}<circle cx={position.x} cy={position.z} r=".26" fill="#3f5847" stroke="white" strokeWidth=".12"/></svg></div></div>
-        <footer className="model-footer"><span>Acasă, împreună</span><div><label><Switch checked={furniture} onCheckedChange={v=>{setFurniture(v);model.current?.setFurniture(v);}} aria-label="Arată mobilierul"/>Mobilier</label></div><button onClick={()=>setNotes(true)}><FileText size={14}/>Detalii</button></footer>
+        <footer className="model-footer"><span>Acasă, împreună</span><div><label><Switch checked={furniture} onCheckedChange={v=>{setFurniture(v);model.current?.setFurniture(v);}} aria-label="Arată mobilierul"/>Mobilier</label></div><button onClick={openNotes}><FileText size={14}/>Detalii</button></footer>
       </section>
     </div>
+    <Sheet open={roomsOpen} onOpenChange={changeRoomsOpen}><SheetContent side="left" className="rooms-sheet" showCloseButton={false}><SheetClose className="notes-close" aria-label="Închide"><X size={20}/></SheetClose><SheetTitle>Încăperi</SheetTitle><SheetDescription>Alege un loc pentru a muta perspectiva.</SheetDescription>{roomList()}<button className="connection-link" onClick={()=>selectRoom('connection')}><DoorOpen/>Vezi pasajul interior<ChevronRight/></button></SheetContent></Sheet>
     <Sheet open={notes} onOpenChange={setNotes}><SheetContent className="source-sheet" showCloseButton={false}><SheetClose className="notes-close" aria-label="Închide"><X size={20}/></SheetClose><SheetTitle>Despre amenajare</SheetTitle><SheetDescription>O locuință gândită pentru întreaga familie.</SheetDescription><div className="source-body">
       <h3>Bucătărie și loc de luat masa</h3><p>Bucătăria spațioasă ocupă fostul salon din apartamentul din dreapta. Masa pentru opt persoane este înconjurată de scaune tapițate. Dulapurile până la tavan, sertarele adânci și electrocasnicele integrate păstrează blatul liber.</p>
       <h3>Un living pentru relaxare</h3><p>Canapeaua generoasă, fotoliul și mesele din piatră creează un loc confortabil pentru familie. Biblioteca și mobilierul realizat pe comandă folosesc pereții disponibili. Al doilea birou se află în locul fostei bucătării, integrat în mobilier.</p>

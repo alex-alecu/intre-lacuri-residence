@@ -12,6 +12,10 @@ The 3D overview has cut walls. Drag to rotate. Use the wheel to zoom. Select a r
 
 The interface is in Romanian. Select **Plimbare**, then the start control. Use W A S D or the arrow keys to move. Use the mouse to look. Hold Shift to move faster. Press Esc to release the mouse. On a touch screen, drag the scene to look and use the four arrow controls to move. The model has no room labels or dimension lines.
 
+On iPad, use **Încăperi** to open the room list. The model uses the available screen in portrait, landscape, and Split View. In the 3D view, drag one finger to rotate. Use two fingers to zoom and move the view. In the plan, drag one finger to move the view. In **Plimbare**, press **Începe plimbarea**, hold a direction arrow with one hand, and drag the scene with the other hand to look. **Pauză** stops movement. The full-screen control also has an expanded layout when the browser cannot enter native full screen.
+
+The touch renderer limits pixel density to reduce graphics work. Static shadows update when the walls or furniture change. The model can restore its graphics context after a temporary loss. Safe-area padding keeps controls clear of the screen edges.
+
 The plan data is in `lib/plan.ts`. Architecture and furniture are in `lib/build-home.ts`. Camera and input controls are in `lib/home-scene.ts`. Collision rules are in `lib/navigation.ts`.
 
 The PDF labels the apartments 11 and 12. The building image labels them 6 and 7. The request labels them 12 and 13. This model uses the matching left and right layouts. See `public/measurements.json` for the source values and differences.
@@ -27,3 +31,5 @@ The two north bathrooms use the fixture positions shown in the building image. T
 Run `npm run check` for the type check. Run `npm run test:model` for dimension and movement checks. The movement test uses a 0.08 m grid and a player radius of 0.19 m. It checks each room, both balcony arms, kitchen access, and desk access from the entry. It also checks the corrected doors, bathroom wall, WC positions, and number of desks and dining chairs. Run `npm run build:pages` for the published files.
 
 Browser image and interaction checks were not run. WebMCP registration is optional. No supported WebMCP test context was available in this session.
+
+Run `npm run test:touch` to check multiple fingers, input cancellation, pause, keyboard input, touch view modes, and portrait framing. These are code checks. A physical iPad was not available for device tests.
