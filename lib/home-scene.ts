@@ -3,21 +3,22 @@ import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
 import {buildHome} from './build-home';
 import {canOccupy} from './navigation';
-import {rooms} from './plan';
+import {type LayoutVersion} from './layouts';
+import {disposeModel} from './dispose-model';
 import {WalkInput} from './walk-input';
 import {sitePath} from './site-path';
 
 export class HomeScene{
  renderer:T.WebGLRenderer;scene=new T.Scene();camera=new T.PerspectiveCamera(40,1,.035,180);controls:OrbitControls;home:ReturnType<typeof buildHome>;
- frame=0;observer:ResizeObserver;mode='overview';furnished=true;input=new WalkInput();player=new T.Vector3(5.72,1.62,9.12);yaw=0;pitch=0;last=0;lastReport=0;immersive=false;disposed=false;touch=navigator.maxTouchPoints>0;contextUnavailable=false;
+ frame=0;observer:ResizeObserver;mode='overview';furnished=true;night=false;artwork:T.Texture;input=new WalkInput();player=new T.Vector3(5.72,1.62,9.12);yaw=0;pitch=0;last=0;lastReport=0;immersive=false;disposed=false;touch=navigator.maxTouchPoints>0;contextUnavailable=false;
  sun=new T.DirectionalLight('#fff0d3',3.2);ambient=new T.HemisphereLight('#f9f2df','#999b80',1.3);ground:T.Mesh;environment:T.WebGLRenderTarget;transition:{position:T.Vector3;target:T.Vector3}|null=null;abort=new AbortController();
- constructor(public host:HTMLElement,public callbacks:{onLock:(v:boolean)=>void;onPosition:(p:{x:number;z:number;yaw:number})=>void;onContextChange?:(lost:boolean)=>void}){
+ constructor(public host:HTMLElement,public callbacks:{onLock:(v:boolean)=>void;onPosition:(p:{x:number;z:number;yaw:number})=>void;onContextChange?:(lost:boolean)=>void},layout:LayoutVersion='original'){
   this.renderer=new T.WebGLRenderer({antialias:true,powerPreference:'high-performance'});this.renderer.setPixelRatio(Math.min(devicePixelRatio,this.touch?1.25:1.75));this.renderer.setSize(Math.max(1,host.clientWidth),Math.max(1,host.clientHeight));this.renderer.shadowMap.enabled=true;this.renderer.shadowMap.type=T.PCFSoftShadowMap;this.renderer.shadowMap.autoUpdate=false;this.renderer.shadowMap.needsUpdate=true;this.renderer.toneMapping=T.ACESFilmicToneMapping;this.renderer.toneMappingExposure=1.04;this.renderer.outputColorSpace=T.SRGBColorSpace;host.appendChild(this.renderer.domElement);this.renderer.domElement.setAttribute('aria-label','Locuință mobilată în 3D. Folosește comenzile de vizualizare și lista încăperilor.');
   this.scene.background=new T.Color('#e9e9e1');this.scene.fog=new T.Fog('#e9e9e1',48,120);
   const pmrem=new T.PMREMGenerator(this.renderer),environmentScene=new RoomEnvironment();this.environment=pmrem.fromScene(environmentScene,.04);this.scene.environment=this.environment.texture;this.scene.environmentIntensity=.32;environmentScene.dispose();pmrem.dispose();
   this.scene.add(this.ambient,this.sun);this.sun.position.set(-9,15,1);this.sun.target.position.set(6,0,5);this.scene.add(this.sun.target);this.sun.castShadow=true;this.sun.shadow.mapSize.set(2048,2048);Object.assign(this.sun.shadow.camera,{left:-16,right:16,top:16,bottom:-16,near:.5,far:55});this.sun.shadow.bias=-.0003;this.sun.shadow.normalBias=.028;this.sun.shadow.radius=3;
-  const artwork=new T.TextureLoader().load(sitePath('/artwork/botanical-pair.jpg'));artwork.colorSpace=T.SRGBColorSpace;
-  this.home=buildHome(artwork);this.scene.add(this.home.root);this.home.lights.forEach(l=>l.intensity=1.2);
+  this.artwork=new T.TextureLoader().load(sitePath('/artwork/botanical-pair.jpg'));this.artwork.colorSpace=T.SRGBColorSpace;
+  this.home=buildHome(this.artwork,layout);this.scene.add(this.home.root);this.home.lights.forEach(l=>l.intensity=1.2);
   this.ground=new T.Mesh(new T.PlaneGeometry(300,300),new T.MeshStandardMaterial({color:'#e0e1d7',roughness:1}));this.ground.rotation.x=-Math.PI/2;this.ground.position.set(7,-.24,5);this.ground.receiveShadow=true;this.scene.add(this.ground);
   this.camera.position.set(23,23,27);this.camera.aspect=Math.max(1,host.clientWidth)/Math.max(1,host.clientHeight);this.camera.updateProjectionMatrix();this.controls=new OrbitControls(this.camera,this.renderer.domElement);this.controls.target.set(7.1,0,4.7);this.controls.enableDamping=true;this.controls.dampingFactor=.075;this.controls.minDistance=7;this.controls.maxDistance=55;this.controls.maxPolarAngle=Math.PI*.47;this.controls.minPolarAngle=.06;this.controls.screenSpacePanning=true;this.controls.update();
   this.controls.maxDistance=140;this.controls.touches.TWO=T.TOUCH.DOLLY_PAN;this.setMode('overview');
@@ -49,9 +50,21 @@ export class HomeScene{
  }
  ensurePlayer(){if(canOccupy(this.player.x,this.player.z,this.home.obstacles,this.home.polygons,this.furnished))return;this.placeAt(this.player.x,this.player.z)}
  placeAt(x:number,z:number){if(canOccupy(x,z,this.home.obstacles,this.home.polygons,this.furnished)){this.player.set(x,1.62,z);return}for(let r=.1;r<3;r+=.1)for(let a=0;a<Math.PI*2;a+=Math.PI/12){const xx=x+Math.cos(a)*r,zz=z+Math.sin(a)*r;if(canOccupy(xx,zz,this.home.obstacles,this.home.polygons,this.furnished)){this.player.set(xx,1.62,zz);return}}this.player.set(5.72,1.62,9.12)}
- goToRoom(id:string){const r=rooms.find(r=>r.id===id);if(!r)return;this.clearKeys();if(this.mode==='walk'){this.placeAt(r.visit[0],r.visit[1]);this.yaw=id==='connection'?-Math.PI/2:0;this.pitch=0;this.callbacks.onPosition({x:this.player.x,z:this.player.z,yaw:this.yaw})}else{const target=new T.Vector3(r.x+r.w/2,0,r.z+r.d/2),offset=this.mode==='plan'?new T.Vector3(0,18,.001):new T.Vector3(6.2,10.5,9);this.transition={position:target.clone().add(offset.multiplyScalar(this.viewScale())),target}}}
+ goToRoom(id:string){const r=this.home.rooms.find(r=>r.id===id);if(!r)return;this.clearKeys();if(this.mode==='walk'){this.placeAt(r.visit[0],r.visit[1]);this.yaw=id==='connection'?-Math.PI/2:id==='dressing'?Math.PI:id==='living'&&this.home.layout==='suite'?1.35:0;this.pitch=0;this.callbacks.onPosition({x:this.player.x,z:this.player.z,yaw:this.yaw})}else{const target=new T.Vector3(r.x+r.w/2,0,r.z+r.d/2),offset=this.mode==='plan'?new T.Vector3(0,18,.001):new T.Vector3(6.2,10.5,9);this.transition={position:target.clone().add(offset.multiplyScalar(this.viewScale())),target}}}
+ setLayout(layout:LayoutVersion){
+  if(this.home.layout===layout)return;
+  const next=buildHome(this.artwork,layout),previous=this.home;
+  this.unlock();this.transition=null;
+  this.scene.remove(previous.root);this.home=next;this.scene.add(next.root);
+  next.furniture.visible=this.furnished;next.upper.visible=this.mode==='walk';next.ceiling.visible=this.mode==='walk';
+  next.lights.forEach(light=>light.intensity=this.night?10:1.2);
+  disposeModel(previous.root,previous.textures,[this.artwork]);
+  this.ensurePlayer();
+  if(this.mode==='walk')this.camera.position.copy(this.player);
+  this.callbacks.onPosition({x:this.player.x,z:this.player.z,yaw:this.yaw});this.renderer.shadowMap.needsUpdate=true;
+ }
  setFurniture(v:boolean){this.furnished=v;this.home.furniture.visible=v;this.renderer.shadowMap.needsUpdate=true;this.ensurePlayer()}
- setNight(v:boolean){this.sun.intensity=v?.12:3.2;this.sun.color.set(v?'#aac3e2':'#fff0d3');this.ambient.intensity=v?.42:1.3;this.home.lights.forEach(l=>l.intensity=v?10:1.2);this.scene.environmentIntensity=v?.16:.32;this.renderer.toneMappingExposure=v?1.15:1.04;this.scene.background=new T.Color(v?'#515b5d':'#e9e9e1');if(this.scene.fog instanceof T.Fog)this.scene.fog.color.set(v?'#515b5d':'#e9e9e1')}
+ setNight(v:boolean){this.night=v;this.sun.intensity=v?.12:3.2;this.sun.color.set(v?'#aac3e2':'#fff0d3');this.ambient.intensity=v?.42:1.3;this.home.lights.forEach(l=>l.intensity=v?10:1.2);this.scene.environmentIntensity=v?.16:.32;this.renderer.toneMappingExposure=v?1.15:1.04;this.scene.background=new T.Color(v?'#515b5d':'#e9e9e1');if(this.scene.fog instanceof T.Fog)this.scene.fog.color.set(v?'#515b5d':'#e9e9e1')}
  reset(){if(this.mode==='walk'){this.player.set(5.72,1.62,9.12);this.yaw=this.pitch=0;this.ensurePlayer()}else this.setMode(this.mode)}
  animate=(now:number)=>{if(this.disposed||this.contextUnavailable)return;this.frame=requestAnimationFrame(this.animate);const dt=Math.min((now-this.last)/1000,.04);this.last=now;
   if(this.mode==='walk'){
@@ -60,5 +73,5 @@ export class HomeScene{
   }else{if(this.transition){const alpha=1-Math.exp(-dt*6);this.camera.position.lerp(this.transition.position,alpha);this.controls.target.lerp(this.transition.target,alpha);if(this.camera.position.distanceTo(this.transition.position)<.025)this.transition=null}this.controls.update()}
   this.renderer.render(this.scene,this.camera)
  };
- dispose(){this.disposed=true;cancelAnimationFrame(this.frame);if(document.pointerLockElement===this.renderer.domElement)document.exitPointerLock();this.abort.abort();this.observer.disconnect();this.controls.dispose();const materials=new Set<T.Material>(),geometries=new Set<T.BufferGeometry>(),textures=new Set<T.Texture>(this.home.textures);this.scene.traverse(o=>{if(o instanceof T.Mesh||o instanceof T.Line||o instanceof T.Sprite){if('geometry'in o)geometries.add(o.geometry);for(const m of Array.isArray(o.material)?o.material:[o.material])materials.add(m)}});for(const m of materials){for(const value of Object.values(m))if(value instanceof T.Texture)textures.add(value);m.dispose()}for(const g of geometries)g.dispose();for(const t of textures)t.dispose();this.environment.dispose();this.sun.shadow.dispose();this.renderer.dispose();this.host.replaceChildren()}
+ dispose(){this.disposed=true;cancelAnimationFrame(this.frame);if(document.pointerLockElement===this.renderer.domElement)document.exitPointerLock();this.abort.abort();this.observer.disconnect();this.controls.dispose();disposeModel(this.scene,this.home.textures);this.environment.dispose();this.sun.shadow.dispose();this.renderer.dispose();this.host.replaceChildren()}
 }

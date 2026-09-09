@@ -10,6 +10,14 @@ The Pages workflow runs on Linux. The installed vinext version can stop with a l
 
 The 3D overview has cut walls. Drag to rotate. Use the wheel to zoom. Select a room to move the camera.
 
+Use the two controls above the model to compare the layouts. **01 Living + birou** keeps the original living room and both offices. **02 Dormitor + dressing** adds a master bedroom in the west living room and an open dressing room in the south-west office. The new version opens first. The `layout=original` and `layout=suite` URL parameters keep the selected version after a page reload. Switching keeps the camera, view mode, light setting, and furniture setting. It pauses walking and moves the player to clear floor if necessary.
+
+The new enclosure has a 15 cm east wall and a short north return. The east face aligns with the utility wall. A 1 m door opens into the bedroom. The north common passage remains 1.075 m wide. The existing east bedroom, guest room, child room, bathrooms, and kitchen remain in place. The new layout has four bedrooms and one office.
+
+The west bedroom has a 2.00 × 2.00 m bed, two bedside tables, and a shallow TV cabinet. The conservative model clearance is 0.81 m on the east side of the bed and 0.90 m at the foot. The dressing room has two open walnut wardrobe runs, 2.20 m and 1.60 m long, with shelves, hanging space, drawers, a full-length mirror, and a seat. The west window, column, and service shaft remain clear. The wardrobe corner has a gap of about 3 cm. The proposed enclosed floor area is 20.94 m², including 5.69 m² for the open dressing zone. These are model areas, not source room labels or site measurements.
+
+Version data is in `lib/layouts.ts`. The original source data in `lib/plan.ts` and `public/measurements.json` still describes the original layout. Run `npm run test:layouts` to check the added wall, doorway, furniture bounds, room access, area outlines, version switching, and resource release. The tests use model geometry without a graphics context. They do not replace a physical device check or a site survey.
+
 The interface is in Romanian. Select **Plimbare**, then the start control. Use W A S D or the arrow keys to move. Use the mouse to look. Hold Shift to move faster. Press Esc to release the mouse. On a touch screen, drag the scene to look and use the four arrow controls to move. The model has no room labels or dimension lines.
 
 On iPad, use **Încăperi** to open the room list. The model uses the available screen in portrait, landscape, and Split View. In the 3D view, drag one finger to rotate. Use two fingers to zoom and move the view. In the plan, drag one finger to move the view. In **Plimbare**, press **Începe plimbarea**, hold a direction arrow with one hand, and drag the scene with the other hand to look. **Pauză** stops movement. The full-screen control also has an expanded layout when the browser cannot enter native full screen.

@@ -2,7 +2,8 @@ import * as T from 'three';
 import {RoundedBoxGeometry} from 'three/addons/geometries/RoundedBoxGeometry.js';
 import {rooms,shell,balconies} from './plan';
 import type {Obstacle} from './navigation';
-export function buildHome(artwork?:T.Texture){
+import {getLayout,type LayoutVersion} from './layouts';
+export function buildHome(artwork?:T.Texture,layout:LayoutVersion='original'){
  const root=new T.Group(),furniture=new T.Group(),upper=new T.Group(),ceiling=new T.Group();
  root.add(furniture,upper,ceiling);upper.visible=false;ceiling.visible=false;
  const fixtures:{name:string;x:number;z:number;w:number;d:number;rotation:number}[]=[];
@@ -84,6 +85,13 @@ export function buildHome(artwork?:T.Texture){
  // Guest closure and its 90 cm hall door remain part of the proposed design.
  wall('z',3.9375,1,4.7,.125,[{a:3.4,b:4.3,kind:'door',h:2.1,swing:'reverse'}],'Guest hall door');wall('x',3.0625,4,8,.125,[{a:4.7,b:5.6,kind:'door',h:2.1,swing:'reverse'}]);
  wall('x',4.6375,0,3.875,.125,[],'Closed guest south partition');
+ if(layout==='suite'){
+  // The outer face aligns with the utility wall. The common hall stays outside the suite.
+  wall('x',4.625,3.875,5,.15,[],'Suite partition');
+  wall('z',4.925,4.55,8.25,.15,[{a:6.45,b:7.45,kind:'door',h:2.15,swing:'reverse'}],'Suite partition');
+  // Keep the open leaf solid in walking mode, including with furniture hidden.
+  obstacle(4.445,7.43,.92,.07,'Suite door leaf');
+ }
  wall('z',6.1375,3.125,5.7,.125,[{a:3.325,b:4.125,kind:'door',h:2.1,hinge:'end'}]);
  wall('x',2.4375,8.25,10.2,.125,[{a:9.25,b:10.05,kind:'door',h:2.1,hinge:'end',swing:'reverse'}]);
  wall('z',10.2625,0,3.725,.125,[{a:2.6,b:3.5,kind:'door',h:2.1}]);wall('x',3.6625,10.325,14.2,.125);
@@ -287,6 +295,61 @@ export function buildHome(artwork?:T.Texture){
   const bridge=group(1.24,9.72,Math.PI);box(0,2.20,0,1.65,.72,.30,walnut,bridge,.015);for(const xx of [-.55,0,.55])box(xx,2.20,.164,.535,.69,.025,ivory,bridge,.009);box(0,1.83,.08,1.60,.018,.022,new T.MeshStandardMaterial({color:'#fff1c8',emissive:'#ffdd9b',emissiveIntensity:1.4}),bridge);
   storage(6.31,6.65,1.35,.26,-Math.PI/2,2.54,'Shallow hall storage');plant(.40,6.98,1.1);plant(.23,9.52,.7);linenPendant(2.30,6.43);
  }
+ function openDressingWardrobe(x:number,z:number,w:number,rot:number,mirrorBay=false){
+  const d=.60,h=2.45,g=group(x,z,rot);g.name='Open dressing wardrobe';
+  box(0,h/2,-d/2+.018,w,h,.036,walnut,g);
+  for(const yy of [.065,2.415])box(0,yy,0,w,.07,d,walnut,g);
+  const count=mirrorBay?3:2,bay=w/count;
+  for(let i=0;i<=count;i++)box(-w/2+i*bay,h/2,0,.028,h,d,walnut,g);
+  for(let i=0;i<count;i++){
+   const xx=-w/2+(i+.5)*bay;
+   box(xx,2.15,-.02,bay-.03,.025,d-.04,wood,g);
+   box(xx,2.12,.23,bay-.08,.012,.018,glow,g);
+   if(mirrorBay&&i===1){
+    box(xx,1.12,-.24,bay-.07,1.97,.025,bronze,g,.018);
+    box(xx,1.12,-.222,bay-.10,1.94,.012,mat('#b6c5bc',.07,.90),g,.012);
+   }else{
+    for(const yy of [.27,.56]){
+     box(xx,yy,.015,bay-.05,.265,d-.04,wood,g,.008);
+     box(xx,yy,.301,bay-.055,.24,.015,ivory,g,.005);
+     box(xx,yy+.07,.314,.19,.012,.012,bronze,g,.004);
+    }
+    beam([xx-bay/2+.05,1.99,0],[xx+bay/2-.05,1.99,0],.017,bronze,g);
+    for(let item=0;item<4;item++){
+     const cx=xx-bay*.32+item*bay*.21,finish=[cream,olive,blush,linen][item];
+     beam([cx,1.985,0],[cx,1.86,-.18],.012,wood,g);beam([cx,1.985,0],[cx,1.86,.18],.012,wood,g);
+     box(cx,1.42,0,.07,.85,.40,finish,g,.025);
+    }
+   }
+   box(xx,2.29,-.02,bay*.65,.21,.36,ivory,g,.025);
+  }
+  rectObstacle(x,z,w+.028,d+.025,rot,'Open dressing wardrobe');contact(x,z,w+.15,d+.15);
+  fixtures.push({name:'Open dressing wardrobe',x,z,w:w+.028,d:d+.025,rotation:rot});
+ }
+ function masterSuite(){
+  wovenRug(2.95,6.15,3.25,2.7);
+  const mainBed=bed(2.95,5.84,2,2);mainBed.name='Suite king bed';
+  // A broad upholstered headboard and two reading tables leave both bed sides open.
+  box(2.95,.77,4.785,3.12,1.45,.12,cream,furniture,.04);
+  for(const x of [1.58,4.32])bedside(x,5.12);
+  fixtures.push({name:'Suite king bed',x:2.95,z:5.84,w:2,d:2,rotation:0});
+  const tv=group(3.68,7.975,Math.PI);tv.name='Suite media cabinet';
+  box(0,.37,0,2.20,.46,.24,walnut,tv,.018);
+  for(const xx of [-.825,-.275,.275,.825])box(xx,.37,.121,.535,.42,.018,ivory,tv,.007);
+  box(0,1.30,-.095,2.20,2.55,.04,travertine,tv,.008);
+  box(0,1.25,.01,1.46,.84,.045,black,tv,.015).name='Television';
+  box(0,1.25,.037,1.40,.7875,.008,mat('#26322e',.2),tv);
+  rectObstacle(3.68,7.975,2.20,.26,Math.PI,'Suite media cabinet');
+  fixtures.push({name:'Television',x:3.68,z:7.965,w:1.46,d:.045,rotation:Math.PI});
+  openDressingWardrobe(1.14,9.57,2.20,Math.PI,true);
+  openDressingWardrobe(2.225,8.40,1.60,-Math.PI/2);
+  wovenRug(1.05,8.55,1.45,1.20);
+  const seat=group(.80,8.12);seat.name='Dressing seat';
+  cylinder(0,.20,0,.24,.35,walnut,seat);cylinder(0,.42,0,.275,.16,cream,seat);
+  rectObstacle(.80,8.12,.55,.55,0,'Dressing seat');contact(.80,8.12,.75,.75);
+  linenPendant(2.95,6.35);linenPendant(1.1,8.50);
+  storage(6.31,6.65,1.35,.26,-Math.PI/2,2.54,'Shallow hall storage');
+ }
  function cloud(parent:T.Object3D,x:number,y:number,z:number,scale=1,flat=false){
   const g=new T.Group();g.position.set(x,y,z);g.scale.setScalar(scale);parent.add(g);
   for(const [xx,yy,r]of [[-.24,0,.17],[0,.10,.23],[.24,.02,.18],[.06,-.05,.18]])sphere(xx,yy,0,r,flat?glow:cream,g,1,.85,flat?.19:1);
@@ -337,7 +400,8 @@ export function buildHome(artwork?:T.Texture){
  }
 
  // Reference colours and seating, within the checked room dimensions.
- luxuryLiving();grandKitchen();grandDining();
+ if(layout==='suite')masterSuite();else luxuryLiving();
+ grandKitchen();grandDining();
  slidingWardrobe(6.93,6.80,1.80,.42,'Hall coat wardrobe');
  slidingWardrobe(8.57,3.05,1.00,.60,'Small hall wardrobe');
 
@@ -354,5 +418,5 @@ export function buildHome(artwork?:T.Texture){
  // Sheer curtains are kept above the cut plane in the overhead views.
  function curtains(x:number,z:number,width:number,rot=0,drapes=false){const g=new T.Group();g.position.set(x,0,z);g.rotation.y=rot;upper.add(g);box(0,2.47,0,width+.28,.035,.035,black,g);const fabric=new T.MeshStandardMaterial({color:'#f0eadb',roughness:1,transparent:true,opacity:.73,side:T.DoubleSide});for(const side of [-1,1])for(let i=0;i<9;i++){const xx=side*(width/2+.02)-side*i*.045;box(xx,1.27,Math.sin(i*1.1)*.035,.052,2.33,.035,fabric,g,.012)}if(drapes)for(const side of [-1,1])for(let i=0;i<6;i++)box(side*(width/2+.14-i*.035),1.25,.07+Math.sin(i)*.022,.050,2.37,.045,linen,g,.017)}
  curtains(5.6,.08,1.8,0,true);curtains(12.6,.09,1.8);curtains(.09,3,1.8,Math.PI/2);curtains(.09,6,1.8,Math.PI/2,true);curtains(14.11,6.1,1.8,Math.PI/2,true);
- return {root,furniture,upper,ceiling,fixtures,obstacles,lights,textures,polygons:[shell,...balconies.map(b=>b.points)]};
+ return {root,furniture,upper,ceiling,fixtures,obstacles,lights,textures,layout,...getLayout(layout),polygons:[shell,...balconies.map(b=>b.points)]};
 }
