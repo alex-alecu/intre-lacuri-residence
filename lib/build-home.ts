@@ -108,7 +108,6 @@ export function buildHome(artwork?:T.Texture){
  function book(x:number,y:number,z:number,w=.17,h=.27,d=.12,parent:T.Object3D=furniture,color=clay){box(x,y,z,w,h,d,color,parent,.008);box(x,y,z+d/2+.001,w*.83,h*.88,.006,mat('#dfdacb'),parent)}
  function vase(x:number,y:number,z:number,r=.1,parent:T.Object3D=furniture){cylinder(x,y+.13,z,r,.26,white,parent,r*.67);cylinder(x,y+.26,z,r*.52,.025,mat('#9c9785'),parent)}
  function plant(x:number,z:number,scale=1,parent:T.Object3D=furniture){const g=new T.Group();g.position.set(x,0,z);g.scale.setScalar(scale);parent.add(g);if(parent===furniture)obstacle(x,z,.43*scale,.43*scale,'Plant pot',true);cylinder(0,.18,0,.18,.36,mat('#b89779'),g,.23);cylinder(0,.355,0,.19,.02,mat('#584b35'),g);for(let i=0;i<9;i++){const a=i*2.4,h=.55+i*.075,xx=Math.cos(a)*.21,zz=Math.sin(a)*.21;const curve=new T.CatmullRomCurve3([new T.Vector3(0,.3,0),new T.Vector3(xx*.4,h*.8,zz*.4),new T.Vector3(xx,h,zz)]);mesh(new T.TubeGeometry(curve,7,.009,4,false),mat('#697647'),g);const leaf=sphere(xx,h,zz,.19,mat(i%2?'#65784b':'#7f8c58'),g,.52,1.65,.16);leaf.rotation.set(Math.cos(a)*.7,a,Math.sin(a)*.7)}}
- function lamp(x:number,z:number,h=1.55,parent:T.Object3D=furniture){if(parent===furniture)obstacle(x,z,.38,.38,'Floor lamp',true);cylinder(x,.035,z,.19,.06,black,parent);cylinder(x,h/2,z,.012,h,brass,parent);cylinder(x,h,z,.25,.3,mat('#ede1c0'),parent,.14);const b=sphere(x,h-.1,z,.05,new T.MeshStandardMaterial({color:'#fff0bb',emissive:'#ffd995',emissiveIntensity:2}),parent);b.castShadow=false}
  function pendant(x:number,z:number,r=.3){cylinder(x,2.56,z,.007,.28,black,upper);cylinder(x,2.30,z,r,.25,mat('#d6b37b'),upper,r*.25);cylinder(x,2.17,z,r*.83,.018,new T.MeshStandardMaterial({color:'#fff6d0',emissive:'#ffdf9d',emissiveIntensity:1.4}),upper);const light=new T.PointLight('#ffe0b1',5,5,2);light.position.set(x,2.12,z);lights.push(light);root.add(light)}
  function art(x:number,y:number,z:number,w:number,h:number,rot=0,child=false){const g=new T.Group();g.position.set(x,y,z);g.rotation.y=rot;upper.add(g);box(0,0,0,w+.06,h+.06,.035,wood,g);box(0,0,.025,w,h,.015,mat('#e6ddc6'),g);const disk=mesh(new T.CircleGeometry(w*.23,40),mat(child?'#d7b36f':'#a76d54'),g);disk.position.set(-w*.16,h*.13,.037);const disk2=mesh(new T.CircleGeometry(w*.34,40),mat(child?'#9ea980':'#7c8667'),g);disk2.scale.y=.6;disk2.position.set(w*.17,-h*.3,.041)}
  function beam(a:number[],b:number[],width:number,finish:T.Material,parent:T.Object3D){
@@ -268,13 +267,25 @@ export function buildHome(artwork?:T.Texture){
  function loungeChair(x:number,z:number,rot:number){
   const g=group(x,z,rot);box(0,.36,0,.82,.41,.83,cream,g,.19);box(0,.71,-.31,.83,.55,.18,cream,g,.13);for(const xx of [-.36,.36])box(xx,.57,.02,.14,.40,.84,cream,g,.10);box(0,.59,0,.63,.14,.64,cream,g,.09);for(const xx of [-.28,.28])for(const zz of [-.26,.26])cylinder(xx,.115,zz,.025,.23,wood,g,.018);box(.12,.80,-.13,.31,.30,.12,olive,g,.055);rectObstacle(x,z,.86,.88,rot,'Lounge chair');contact(x,z,1.1,1.1);
  }
+ function livingMedia(){
+  const g=group(3.75,7.88,Math.PI);g.name='Media cabinet';
+  box(0,.33,0,2.30,.47,.38,wood,g,.02);
+  for(let i=0;i<4;i++)box(-1.15+(i+.5)*2.30/4,.34,.201,2.30/4-.015,.42,.018,ivory,g,.006);
+  box(0,1.31,-.185,2.31,2.56,.065,travertine,g,.01);
+  for(const xx of [-1.12,1.12])box(xx,1.32,-.143,.02,2.40,.015,bronze,g);
+  box(0,1.24,-.04,1.46,.84,.045,black,g,.015).name='Television';
+  box(0,1.24,-.013,1.40,.7875,.008,mat('#26322e',.2),g);
+  box(0,.69,-.04,.045,.26,.045,black,g);
+  rectObstacle(3.75,7.88,2.31,.44,Math.PI,'Media cabinet');contact(3.75,7.88,2.55,.75);
+  fixtures.push({name:'Television',x:3.75,z:7.92,w:1.46,d:.045,rotation:Math.PI});
+ }
  function luxuryLiving(){
-  wovenRug(2.10,6.50,3.90,2.75);sofa(1.9375,5.22,3.15,0,olive);ovalCoffee(1.9375,6.43,1.30,.62);loungeChair(1.90,7.64,Math.PI);loungeChair(3.60,7.35,Math.PI+.35);
-  botanicalPrint(1.48,1.80,4.735,.63,.85,0);botanicalPrint(2.40,1.80,4.735,.63,.85,1);
-  const pouf=group(4.35,6.20);sphere(0,.23,0,.28,wood,pouf,1,.80,1);rectObstacle(4.35,6.20,.56,.56,0,'Woven pouf');
+  wovenRug(2.40,6.50,3.90,2.75);sofa(2.30,5.22,3.15,0,olive);ovalCoffee(2.30,6.43,1.30,.62);loungeChair(1.90,7.64,Math.PI);loungeChair(4.80,6.65,-Math.PI/2);livingMedia();
+  botanicalPrint(1.84,1.80,4.735,.63,.85,0);botanicalPrint(2.76,1.80,4.735,.63,.85,1);
+  const pouf=group(4.45,5.65);sphere(0,.23,0,.28,wood,pouf,1,.80,1);rectObstacle(4.45,5.65,.56,.56,0,'Woven pouf');
   desk(1.24,9.52,Math.PI);chair(1.24,8.61,0,sage,true);storage(2.30,9.24,.45,.60,Math.PI,2.54,'Office tall storage',walnut);
   const bridge=group(1.24,9.72,Math.PI);box(0,2.20,0,1.65,.72,.30,walnut,bridge,.015);for(const xx of [-.55,0,.55])box(xx,2.20,.164,.535,.69,.025,ivory,bridge,.009);box(0,1.83,.08,1.60,.018,.022,new T.MeshStandardMaterial({color:'#fff1c8',emissive:'#ffdd9b',emissiveIntensity:1.4}),bridge);
-  storage(6.31,6.65,1.35,.26,-Math.PI/2,2.54,'Shallow hall storage');plant(.40,6.98,1.1);lamp(3.85,5.12);plant(.23,9.52,.7);linenPendant(1.9375,6.43);
+  storage(6.31,6.65,1.35,.26,-Math.PI/2,2.54,'Shallow hall storage');plant(.40,6.98,1.1);plant(.23,9.52,.7);linenPendant(2.30,6.43);
  }
  function cloud(parent:T.Object3D,x:number,y:number,z:number,scale=1,flat=false){
   const g=new T.Group();g.position.set(x,y,z);g.scale.setScalar(scale);parent.add(g);
