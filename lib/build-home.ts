@@ -3,6 +3,7 @@ import {RoundedBoxGeometry} from 'three/addons/geometries/RoundedBoxGeometry.js'
 import {rooms,shell,balconies} from './plan';
 import type {Obstacle} from './navigation';
 import {getLayout,type LayoutVersion} from './layouts';
+import {buildChildRoom} from './build-child-room';
 export function buildHome(artwork?:T.Texture,layout:LayoutVersion='original'){
  const root=new T.Group(),furniture=new T.Group(),upper=new T.Group(),ceiling=new T.Group();
  root.add(furniture,upper,ceiling);upper.visible=false;ceiling.visible=false;
@@ -405,48 +406,13 @@ export function buildHome(artwork?:T.Texture,layout:LayoutVersion='original'){
   cylinder(5.77,2.56,1.38,.008,.26,wood,upper);cloud(upper,5.77,2.27,1.38,1.05);const light=new T.PointLight('#ffe0ba',1.2,4,2);light.position.set(5.77,2.10,1.38);root.add(light);lights.push(light);
  }
  function childrenRoom(){
-  wovenRug(3.15,2.48,1.25,2.50);
-  const x=3.20,g=group(x,2.13);g.name='Children bed';
-  box(0,.23,0,1.02,.34,2.04,cream,g,.075);
-  box(0,.46,0,.90,.20,1.90,linen,g,.065);
-  box(0,.80,-1.05,1.08,1.48,.12,blush,g,.09);
-  for(const xx of [-.33,0,.33])box(xx,.81,-.978,.012,1.22,.01,cream,g,.004);
-  box(0,.59,.25,.91,.10,1.32,blush,g,.065);
-  box(0,.65,-.63,.67,.18,.42,cream,g,.075);
-  box(.03,.74,-.47,.35,.25,.14,olive,g,.055);
-  box(0,.66,.65,.94,.045,.42,linen,g,.025);
-  box(0,.28,1.027,.86,.19,.024,walnut,g,.008);
-  box(0,.31,1.045,.19,.016,.014,bronze,g,.004);
-  rectObstacle(x,2.13,1.08,2.24,0,'Child bed');contact(x,2.13,1.3,2.45);
-  fixtures.push({name:'Children bed',x,z:2.13,w:.90,d:1.90,rotation:0});
-  const closet=closedCabinet(1.575,4.235,2.75,.56,2.40,Math.PI,'Children sliding wardrobe',.02,true);
-  for(const door of closet.children.filter(o=>o.name==='Closed storage front')){
-   for(let i=0;i<7;i++)box(door.position.x-.33+i*.11,.40,door.position.z+.014,.018,.52,.008,walnut,closet,.003);
+  fixtures.push(buildChildRoom(furniture,obstacles,{linen,wood,rug:rugmat,glow}));
+  closedCabinet(1.575,4.235,2.75,.56,2.40,Math.PI,'Children sliding wardrobe',.02,true);
+  for(const x of [.85,1.95,3.05]){
+   cylinder(x,2.68,2.65,.07,.025,cream,upper);
+   cylinder(x,2.664,2.65,.05,.008,glow,upper);
   }
-  closedCabinet(2.00,1.20,1.20,.34,1.94,0,'Children toy storage');
-  // Low play equipment fits within the padded area, clear of both balcony routes.
-  rug(1.58,2.50,1.58,1.55,cream);
-  for(let row=0;row<4;row++)for(let col=0;col<4;col++)box(1.58+(col-1.5)*.38,.070,2.50+(row-1.5)*.38,.365,.035,.365,(row+col)%3===0?blush:(row+col)%3===1?cream:olive,furniture,.035);
-  const play=group(1.58,2.575);play.name='Children climbing frame';
-  for(const xx of [-.35,.35]){
-   beam([xx,.09,-.50],[xx,.68,-.21],.04,wood,play);
-   beam([xx,.09,.07],[xx,.68,-.21],.04,wood,play);
-  }
-  for(let i=0;i<6;i++){
-   const y=.14+i*.095,t=(y-.09)/.59;
-   for(const zz of [-.50+t*.29,.07-t*.28])beam([-.35,y,zz],[.35,y,zz],.027,walnut,play);
-  }
-  const ramp=box(0,.395,.1925,.54,.035,Math.hypot(.685,.49),wood,play,.012);ramp.rotation.x=Math.atan2(.49,.685);
-  for(const xx of [-.285,.285])beam([xx,.71,-.15],[xx,.22,.535],.028,wood,play);
-  rectObstacle(1.58,2.575,.78,1.13,0,'Children climbing frame');
-  const seat=group(.28,1.76,Math.PI/2);seat.name='Children reading seat';
-  box(0,.20,0,.52,.36,.48,walnut,seat,.04);box(0,.43,.01,.52,.16,.48,cream,seat,.07);
-  box(0,.66,-.18,.52,.48,.12,olive,seat,.07);box(.04,.68,-.06,.32,.28,.12,blush,seat,.065);
-  rectObstacle(.28,1.76,.52,.50,Math.PI/2,'Children reading seat');
-  closedCabinet(.17,1.76,.50,.24,.65,Math.PI/2,'Reading wall cabinet',1.12);
-  const sconce=group(3.20,1.055);sconce.name='Children reading light';
-  box(0,1.89,0,.12,.30,.035,bronze,sconce,.022);sphere(0,1.88,.095,.085,glow,sconce);
-  linenPendant(2.35,2.50);
+  const light=new T.PointLight('#ffe1af',1.2,5,2);light.position.set(1.75,2.55,2.85);root.add(light);lights.push(light);
  }
  function gamingRoom(){
   const revised=layout==='suite';

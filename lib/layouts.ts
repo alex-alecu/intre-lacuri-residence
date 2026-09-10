@@ -14,7 +14,7 @@ const suiteRooms=rooms.flatMap(room=>{
   {id:'dressing',name:'Dressing',side:'ARIPA DE VEST',area:5.6921,x:0,z:7.6,w:2.55,d:2.3,measurement:'Proposed open dressing zone; not a source room area',primary:true,detail:'Dulapuri cu uși glisante',description:'Dulapuri închise pe două laturi, uși glisante, oglindă înaltă și un taburet tapițat. Fereastra rămâne liberă.',visit:[1.3,8.75]},
  ];
  if(room.id==='master')return [{...room,name:'Dormitor de est',detail:'Pat și acces la balcon'}];
- if(room.id==='guest')return [{...room,name:'Camera copilului',detail:'Pat, loc de joacă și depozitare',description:'Un pat tapițat, loc de joacă cu saltea, cadru de cățărat și tobogan jos. Dulap de 2,75 m cu uși glisante, dulap închis pentru jucării, corp suspendat și scaun de lectură.',visit:[2.39,3.55]}];
+ if(room.id==='guest')return [{...room,name:'Camera copilului',detail:'Pat la înălțime, tobogan și cort',description:'Pat la înălțime, cu saltea de 90 × 190 cm, scară din stejar și tobogan alb. Cort de lectură și rafturi pentru jucării sub pat. Măsuță rotundă, scaune moi și lumini calde. Dulapul de 2,75 m și accesul la ambele balcoane rămân libere.',visit:[.55,3.60]}];
  if(room.id==='daughter')return [{...room,name:'Gaming și birou',detail:'Birou, canapea și dulap cu uși glisante',description:'Birou de 1,30 m și televizor cu diagonala de 180 cm pe același perete de vest. Biroul este lângă fereastră, orientat spre perete. Canapea de 2,40 m în mijlocul camerei, cu spatele spre dulapul cu uși glisante de pe peretele de est. Măsuță cu depozitare și corp pentru consolă.',visit:[5.55,2.75]}];
  return [room];
 });

@@ -11,23 +11,32 @@ export function verifyFamilyRooms(home, canOccupy) {
     return new T.Box3().setFromObject(object, true);
   };
   const bed = bounds('Children bed');
-  const play = bounds('Children climbing frame'), toyStorage = bounds('Children toy storage');
+  const stairs = bounds('Children loft stairs'), slide = bounds('Children loft slide');
+  const mattress = bounds('Children loft mattress');
+  const platform = bounds('Children loft platform'), tent = bounds('Children reading tent');
+  const cubbies = bounds('Children toy cubbies');
+  assert.ok(mattress.min.y > 1.3 && 2.7-mattress.max.y >= .9, 'The loft mattress is raised with space below the ceiling');
+  assert.ok(Math.abs(mattress.max.x-mattress.min.x-.90)<1e-6 && Math.abs(mattress.max.z-mattress.min.z-1.90)<1e-6, 'The child mattress is 90 by 190 cm');
+  assert.ok(stairs.min.x >= 1.04 && slide.min.x >= 1.04, 'The stairs and slide clear the west balcony route');
+  assert.ok(stairs.max.z < slide.min.z, 'The stairs and slide are beside each other');
+  for(const item of [tent,cubbies]){
+    assert.ok(item.max.y < platform.min.y, 'The tent and toy shelves clear the underside of the bed');
+    assert.ok(item.min.x>=platform.min.x && item.max.x<=platform.max.x && item.min.z>=platform.min.z && item.max.z<=platform.max.z, 'The play furniture fits within the loft footprint');
+  }
+  assert.ok(!tent.intersectsBox(cubbies), 'The tent clears the toy shelves');
   const wardrobe = bounds('Children sliding wardrobe');
   const desk = bounds('Gaming desk'), sofa = bounds('Gaming sofa'), media = bounds('Gaming media cabinet');
   assert.ok(bed.max.x < 3.875 && bed.min.z >= 1, 'The bed is in the corner room');
   assert.ok(desk.min.x >= 4-1e-6 && desk.max.x <= 8 && desk.max.z <= 3, 'The desk is in the former child room');
   assert.equal(home.obstacles.filter(o => o.name === 'Office desk' && o.x < 4 && o.z < 4.575).length, 0, 'The corner bedroom has no desk');
   assert.equal(home.obstacles.filter(o => o.name === 'Child bed').length, 1, 'The room has one child bed');
-  assert.ok(bed.min.x-play.max.x>=.60,'The bed has at least 60 cm beside the play equipment');
   assert.ok(wardrobe.min.z-bed.max.z>=.75, 'At least 75 cm remains at the bed foot');
-  assert.ok(toyStorage.max.x-toyStorage.min.x>=1.15,'The child has a separate toy storage unit');
   const officeStorage=bounds('Office storage wall');
   assert.ok(officeStorage.min.z<=.021 && officeStorage.max.z>=2.979 && officeStorage.max.y>=2.3,'The office wardrobe covers the full east wall');
   assert.ok(Math.max(sofa.max.x-sofa.min.x,sofa.max.z-sofa.min.z)>=2.399,'The office sofa is at least 2.40 m long');
   assert.ok(officeStorage.min.x-sofa.max.x>=.60,'The sofa leaves at least 60 cm along the wardrobe');
   assert.ok(officeStorage.min.x-media.max.x>=.60,'The TV cabinet keeps the south wardrobe corner accessible');
   assert.ok(bounds('Office wall cabinets').min.y>=1.65,'The closed wall cabinets clear the desk');
-  assert.ok(play.min.z-toyStorage.max.z>=.60,'The toy storage has at least 60 cm in front');
   const screen=home.furniture.getObjectByName('Office TV screen');
   assert.ok(screen,'The office TV screen is present');
   screen.geometry.computeBoundingBox();
@@ -101,10 +110,10 @@ export function verifyFamilyRooms(home, canOccupy) {
     }
   }
   const officeRoutes=revised?[['desk access',5.4,1.10],['sofa access',5.4,1.45],['south sofa route',5.7,2.77],['office visit',5.55,2.75],['storage table access',4.93,1.94]]:[['desk access',5.7,2.35],['sofa access',5.8,1.12]];
-  const routes=[['north balcony',.90,.80],['north route',.80,1.30],['reading seat passage',.80,1.76],['west balcony route',.80,2.70],['play to bed aisle',2.39,2.20],['toy storage access',1.8,1.72],['bed foot',2.39,3.55],['hall door',3.9375,3.85],['west balcony',-.20,3.45],['gaming entry',5.15,2.80],...officeRoutes,['wardrobe north',7.03,.35],['wardrobe middle',7.03,1.5],['wardrobe south',7.03,2.55]];
+  const routes=[['child room view',...home.rooms.find(r=>r.id==='guest').visit],['north balcony',.90,.80],['north route',.80,1.30],['stair access',.80,1.76],['west balcony route',.80,2.70],['slide exit',.80,2.12],['play area',1.90,2.80],['bed foot',2.39,3.55],['hall door',3.9375,3.85],['west balcony',-.20,3.45],['gaming entry',5.15,2.80],...officeRoutes,['wardrobe north',7.03,.35],['wardrobe middle',7.03,1.5],['wardrobe south',7.03,2.55]];
   for(const [name,x,z]of routes){
     assert.ok(clear(x,z),`${name}: clear with all room furniture solid`);
     assert.ok(visited[cell(Math.round((x+.8)/step),Math.round((z+.8)/step))],`${name}: reachable with all room furniture solid`);
   }
-  return {playToBed:bed.min.x-play.max.x,footAisle:wardrobe.min.z-bed.max.z,screenDiagonal:Math.hypot(screenBounds.x,screenBounds.y),routes:routes.length};
+  return {loftHeadroom:2.7-mattress.max.y,footAisle:wardrobe.min.z-bed.max.z,screenDiagonal:Math.hypot(screenBounds.x,screenBounds.y),routes:routes.length};
 }

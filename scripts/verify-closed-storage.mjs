@@ -4,7 +4,7 @@ import * as T from 'three';
 // The replacement fronts must hide the complete storage opening, including its upper shelves.
 export function verifyClosedStorage(home){
   const names=home.layout==='original'?['Child closed storage']:
-    ['Children sliding wardrobe','Children toy storage','Reading wall cabinet','Dressing wardrobe south','Dressing wardrobe east','Office storage wall','Office wall cabinets','Gaming media cabinet','Office storage table'];
+    ['Children sliding wardrobe','Dressing wardrobe south','Dressing wardrobe east','Office storage wall','Office wall cabinets','Gaming media cabinet','Office storage table'];
   for(const name of names){
     const group=home.furniture.getObjectByName(name);
     assert.ok(group,`${home.layout}: ${name} is present`);
