@@ -462,11 +462,11 @@
       "depth": 2.015
     },
     {
-      "name": "Toy shelf",
+      "name": "Child closed storage",
       "x": 4.22,
       "z": 1.52,
       "width": 1.38,
-      "depth": 0.405
+      "depth": 0.404
     },
     {
       "name": "Child wardrobe",
@@ -704,7 +704,7 @@
       "measurement": "4.00 × 3.00 m*",
       "primary": true,
       "detail": "Joacă și povești",
-      "description": "Pat-căsuță din lemn, nori luminoși, cort de lectură și depozitare joasă pentru jucării.",
+      "description": "Pat-căsuță din lemn, nori luminoși, cort de lectură și dulap închis pentru jucării și cărți.",
       "visit": [
         5.9,
         2.35

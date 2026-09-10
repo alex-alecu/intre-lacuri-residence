@@ -10,10 +10,12 @@ export function isLayoutVersion(value:unknown):value is LayoutVersion{return lay
 
 const suiteRooms=rooms.flatMap(room=>{
  if(room.id==='living')return [
-  {...room,name:'Dormitor matrimonial',area:15.2475,x:0,z:4.7,w:4.85,d:3.425,measurement:'Proposed bedroom zone; dressing listed separately',detail:'Pat mare și depozitare',description:'Pat de 2 × 2 m și dulapuri pentru haine împăturite în locul televizorului. Acces din hol și dressing deschis.',visit:[4.40,6.10]},
-  {id:'dressing',name:'Dressing deschis',side:'ARIPA DE VEST',area:5.6921,x:0,z:7.6,w:2.55,d:2.3,measurement:'Proposed open dressing zone; not a source room area',primary:true,detail:'Dulapuri deschise din nuc',description:'Depozitare pe două laturi, rafturi luminate, sertare, oglindă înaltă și un taburet tapițat. Fereastra rămâne liberă.',visit:[1.3,8.75]},
+  {...room,name:'Dormitor matrimonial',area:15.2475,x:0,z:4.7,w:4.85,d:3.425,measurement:'Proposed bedroom zone; dressing listed separately',detail:'Pat mare și depozitare',description:'Pat de 2 × 2 m și dulapuri pentru haine împăturite în locul televizorului. Acces din hol și zona de dressing.',visit:[4.40,6.10]},
+  {id:'dressing',name:'Dressing',side:'ARIPA DE VEST',area:5.6921,x:0,z:7.6,w:2.55,d:2.3,measurement:'Proposed open dressing zone; not a source room area',primary:true,detail:'Dulapuri cu uși glisante',description:'Dulapuri închise pe două laturi, uși glisante, oglindă înaltă și un taburet tapițat. Fereastra rămâne liberă.',visit:[1.3,8.75]},
  ];
  if(room.id==='master')return [{...room,name:'Dormitor de est',detail:'Pat și acces la balcon'}];
+ if(room.id==='guest')return [{...room,name:'Camera copilului',detail:'Pat, loc de joacă și depozitare',description:'Un pat tapițat, loc de joacă cu saltea, cadru de cățărat și tobogan jos. Dulap de 2,75 m cu uși glisante, dulap închis pentru jucării, corp suspendat și scaun de lectură.',visit:[2.39,3.55]}];
+ if(room.id==='daughter')return [{...room,name:'Gaming și birou',detail:'Birou, canapea și dulap cu uși glisante',description:'Birou de 1,60 m pe peretele de vest, cu sertare și scaun de lucru. Canapea de 2,40 m și televizor cu diagonala de 180 cm. Dulap cu uși glisante pe tot peretele de est, corpuri închise deasupra biroului, măsuță cu depozitare și corp pentru consolă.',visit:[5.8,2.35]}];
  return [room];
 });
 const suiteFootprints:Record<string,number[][]>={

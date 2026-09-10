@@ -70,7 +70,7 @@ export function buildHome(artwork?:T.Texture,layout:LayoutVersion='original'){
   }part(cursor,end);
  }
  // Clear dimensions set the inner faces. All main columns are retained.
- wall('x',.8,-.4,3.6,.4,[{a:.5,b:1.4,kind:'door',h:2.2}],'Guest north wall');
+ wall('x',.8,-.4,3.6,.4,[{a:.5,b:1.4,kind:'door',h:2.2,...(layout!=='original'?{swing:'reverse' as const}:{})}],'Guest north wall');
  wall('z',3.8,-.4,1,.4);wall('x',-.2,3.6,14.6,.4,[{a:4.7,b:6.5,kind:'window'},{a:8.8,b:9.7,kind:'window',sill:1,h:1.2},{a:11.7,b:13.5,kind:'window',balcony:true}]);
  wall('z',-.2,1,9.9,.4,[{a:2.1,b:3.9,kind:'window',balcony:true},{a:5.1,b:6.9,kind:'window'},{a:8.2,b:9.1,kind:'window'}]);
  wall('z',14.4,0,8.475,.4,[{a:2.6,b:3.5,kind:'door',h:2.2,balcony:true,swing:'reverse'},{a:5.2,b:7,kind:'window'}],'East exterior wall');
@@ -181,7 +181,7 @@ export function buildHome(artwork?:T.Texture,layout:LayoutVersion='original'){
  function bedside(x:number,z:number){cylinder(x,.25,z,.23,.5,wood);cylinder(x,.52,z,.24,.04,stone);cylinder(x,.63,z,.045,.2,brass);cylinder(x,.80,z,.12,.19,linen,furniture,.09);obstacle(x,z,.48,.48,'Bedside table',true)}
  function sofa(x:number,z:number,w:number,rot=0,color=linen,depth=1){const g=group(x,z,rot);g.scale.z=depth;box(0,.30,0,w,.42,.90,color,g,.12);box(0,.67,-.37,w,.57,.19,color,g,.085);for(const xx of [-w/2+.1,w/2-.1])box(xx,.52,.02,.2,.52,.94,color,g,.085);const count=w<2?2:3;for(let i=0;i<count;i++)box(-w*.40+(i+.5)*w*.8/count,.535,.025,w*.8/count-.012,.16,.65,color,g,.07);for(const xx of [-w*.29,w*.3]){const p=box(xx,.78,-.21,.40,.40,.16,xx<0?cream:blush,g,.09);p.rotation.z=xx<0?-.16:.12;p.rotation.x=.14}
   box(-w*.33,.615,.18,.42,.025,.63,cream,g,.025);box(-w*.33,.36,.467,.42,.48,.025,cream,g,.015);
-  rectObstacle(x,z,w,depth,rot,'Sofa');contact(x,z,w+.4,depth+.4)
+  rectObstacle(x,z,w,depth,rot,'Sofa');contact(x,z,w+.4,depth+.4);return g
  }
  function diningCornerSofa(){
   // Two joined seating wings. Their separate bounds keep the inside corner open.
@@ -327,36 +327,20 @@ export function buildHome(artwork?:T.Texture,layout:LayoutVersion='original'){
   const bridge=group(1.24,9.72,Math.PI);box(0,2.20,0,1.65,.72,.30,walnut,bridge,.015);for(const xx of [-.55,0,.55])box(xx,2.20,.164,.535,.69,.025,ivory,bridge,.009);box(0,1.83,.08,1.60,.018,.022,new T.MeshStandardMaterial({color:'#fff1c8',emissive:'#ffdd9b',emissiveIntensity:1.4}),bridge);
   storage(6.31,6.65,1.35,.26,-Math.PI/2,2.54,'Shallow hall storage');plant(.40,6.98,1.1);plant(.23,9.52,.7);linenPendant(2.30,6.43);
  }
- function openDressingWardrobe(x:number,z:number,w:number,rot:number,mirrorBay=false){
-  const d=.60,h=2.45,g=group(x,z,rot);g.name='Open dressing wardrobe';
-  box(0,h/2,-d/2+.018,w,h,.036,walnut,g);
-  for(const yy of [.065,2.415])box(0,yy,0,w,.07,d,walnut,g);
-  const count=mirrorBay?3:2,bay=w/count;
-  for(let i=0;i<=count;i++)box(-w/2+i*bay,h/2,0,.028,h,d,walnut,g);
+ // Dimensions include the closed fronts and recessed handles.
+ function closedCabinet(x:number,z:number,w:number,d:number,h:number,rot:number,name:string,bottom=0,sliding=false,mirror=false){
+  const g=group(x,z,rot);g.name=name;g.userData.sliding=sliding;
+  const frontSpace=sliding?.080:.036;
+  box(0,bottom+h/2,-frontSpace/2,w,h,d-frontSpace,walnut,g,.008);
+  const count=sliding?Math.max(2,Math.ceil(w/1.0)):Math.max(2,Math.ceil(w/.65)),bay=w/count;
   for(let i=0;i<count;i++){
-   const xx=-w/2+(i+.5)*bay;
-   box(xx,2.15,-.02,bay-.03,.025,d-.04,wood,g);
-   box(xx,2.12,.23,bay-.08,.012,.018,glow,g);
-   if(mirrorBay&&i===1){
-    box(xx,1.12,-.24,bay-.07,1.97,.025,bronze,g,.018);
-    box(xx,1.12,-.222,bay-.10,1.94,.012,mat('#b6c5bc',.07,.90),g,.012);
-   }else{
-    for(const yy of [.27,.56]){
-     box(xx,yy,.015,bay-.05,.265,d-.04,wood,g,.008);
-     box(xx,yy,.301,bay-.055,.24,.015,ivory,g,.005);
-     box(xx,yy+.07,.314,.19,.012,.012,bronze,g,.004);
-    }
-    beam([xx-bay/2+.05,1.99,0],[xx+bay/2-.05,1.99,0],.017,bronze,g);
-    for(let item=0;item<4;item++){
-     const cx=xx-bay*.32+item*bay*.21,finish=[cream,olive,blush,linen][item];
-     beam([cx,1.985,0],[cx,1.86,-.18],.012,wood,g);beam([cx,1.985,0],[cx,1.86,.18],.012,wood,g);
-     box(cx,1.42,0,.07,.85,.40,finish,g,.025);
-    }
-   }
-   box(xx,2.29,-.02,bay*.65,.21,.36,ivory,g,.025);
+   const xx=-w/2+(i+.5)*bay,front=d/2-.018-(sliding&&i%2?.040:0);
+   box(xx,bottom+h/2,front,bay-.008,h-.06,.024,mirror&&i===1?mat('#b6c5bc',.07,.90):ivory,g,.004).name='Closed storage front';
+   box(xx+bay*.34,bottom+h*.51,front+.017,.012,Math.min(.34,h*.35),.010,bronze,g,.003);
   }
-  rectObstacle(x,z,w+.028,d+.025,rot,'Open dressing wardrobe');contact(x,z,w+.15,d+.15);
-  fixtures.push({name:'Open dressing wardrobe',x,z,w:w+.028,d:d+.025,rotation:rot});
+  if(sliding)for(const yy of [bottom+.017,bottom+h-.017])box(0,yy,d/2-.008,w-.02,.012,.012,bronze,g);
+  rectObstacle(x,z,w,d,rot,name);if(bottom<.05)contact(x,z,w+.15,d+.15);
+  fixtures.push({name,x,z,w,d,rotation:rot});return g;
  }
  function masterSuite(){
   wovenRug(2.95,6.15,3.25,2.7);
@@ -367,8 +351,8 @@ export function buildHome(artwork?:T.Texture,layout:LayoutVersion='original'){
   fixtures.push({name:'Suite king bed',x:2.95,z:5.84,w:2,d:2,rotation:0});
   // Shallow folded-clothes storage keeps at least 75 cm at the bed foot.
   storage(3.68,7.93,2.20,.36,Math.PI,2.45,'Suite extra dressing');
-  openDressingWardrobe(1.14,9.57,2.20,Math.PI,true);
-  openDressingWardrobe(2.225,8.40,1.60,-Math.PI/2);
+  closedCabinet(1.14,9.57,2.20,.60,2.45,Math.PI,'Dressing wardrobe south',0,true,true);
+  closedCabinet(2.225,8.40,1.60,.60,2.45,-Math.PI/2,'Dressing wardrobe east',0,true);
   // A flush filler joins the backs without blocking the drawer fronts.
   box(2.237,1.225,9.237,.035,2.45,.045,walnut,furniture);
   wovenRug(1.05,8.55,1.45,1.20);
@@ -385,10 +369,8 @@ export function buildHome(artwork?:T.Texture,layout:LayoutVersion='original'){
  }
  function girlRoom(){
   wovenRug(5.90,1.77,1.55,1.80);bed(7.26,1.65,.95,1.85,0,true);
-  const shelves=group(4.22,1.52,Math.PI/2);box(0,.34,0,1.38,.66,.38,wood,shelves,.012);
-  for(const xx of [-.45,0,.45])for(const yy of [.18,.49]){box(xx,yy,.035,.40,.26,.34,yy<.3?ivory:cream,shelves,.025);box(xx,yy+.07,.210,.10,.026,.010,wood,shelves,.009)}
-  for(const yy of [1.05,1.51,1.97]){box(0,yy,-.06,1.38,.035,.24,wood,shelves,.008);box(0,yy-.029,-.10,1.29,.012,.025,glow,shelves);for(let i=0;i<4;i++)book(-.5+i*.12,yy+.145,-.025,.085,.24,.14,shelves,[blush,cream,sage,wood][i])}
-  rectObstacle(4.22,1.52,1.38,.40,Math.PI/2,'Toy shelf');storage(4.30,.40,.58,.52,Math.PI/2,2.5,'Child wardrobe');
+  closedCabinet(4.22,1.52,1.38,.40,2.34,Math.PI/2,'Child closed storage');
+  storage(4.30,.40,.58,.52,Math.PI/2,2.5,'Child wardrobe');
   const tent=group(6.10,.55);tent.name='Reading tent';const fabric=new T.MeshStandardMaterial({color:'#e9ddc7',map:linen.map,side:T.DoubleSide,roughness:1});
   mesh(new T.CylinderGeometry(.045,.43,1.22,24,1,true,Math.PI/4,Math.PI*1.5),fabric,tent).position.y=.72;
   for(const a of [Math.PI/4,Math.PI*3/4,Math.PI*5/4,Math.PI*7/4])beam([Math.sin(a)*.43,.06,Math.cos(a)*.43],[-Math.sin(a)*.07,1.55,-Math.cos(a)*.07],.022,wood,tent);
@@ -403,6 +385,75 @@ export function buildHome(artwork?:T.Texture,layout:LayoutVersion='original'){
    const shape=new T.Shape();for(let i=0;i<10;i++){const a=i*Math.PI/5,r=i%2?.026:.059,xx=Math.sin(a)*r,yy=Math.cos(a)*r;if(i===0)shape.moveTo(xx,yy);else shape.lineTo(xx,yy)}shape.closePath();const star=mesh(new T.ExtrudeGeometry(shape,{depth:.008,bevelEnabled:false}),glow,wallLights);star.position.set(x,y,.009);
   }
   cylinder(5.77,2.56,1.38,.008,.26,wood,upper);cloud(upper,5.77,2.27,1.38,1.05);const light=new T.PointLight('#ffe0ba',1.2,4,2);light.position.set(5.77,2.10,1.38);root.add(light);lights.push(light);
+ }
+ function childrenRoom(){
+  wovenRug(3.15,2.48,1.25,2.50);
+  const x=3.20,g=group(x,2.13);g.name='Children bed';
+  box(0,.23,0,1.02,.34,2.04,cream,g,.075);
+  box(0,.46,0,.90,.20,1.90,linen,g,.065);
+  box(0,.80,-1.05,1.08,1.48,.12,blush,g,.09);
+  for(const xx of [-.33,0,.33])box(xx,.81,-.978,.012,1.22,.01,cream,g,.004);
+  box(0,.59,.25,.91,.10,1.32,blush,g,.065);
+  box(0,.65,-.63,.67,.18,.42,cream,g,.075);
+  box(.03,.74,-.47,.35,.25,.14,olive,g,.055);
+  box(0,.66,.65,.94,.045,.42,linen,g,.025);
+  box(0,.28,1.027,.86,.19,.024,walnut,g,.008);
+  box(0,.31,1.045,.19,.016,.014,bronze,g,.004);
+  rectObstacle(x,2.13,1.08,2.24,0,'Child bed');contact(x,2.13,1.3,2.45);
+  fixtures.push({name:'Children bed',x,z:2.13,w:.90,d:1.90,rotation:0});
+  const closet=closedCabinet(1.575,4.235,2.75,.56,2.40,Math.PI,'Children sliding wardrobe',.02,true);
+  for(const door of closet.children.filter(o=>o.name==='Closed storage front')){
+   for(let i=0;i<7;i++)box(door.position.x-.33+i*.11,.40,door.position.z+.014,.018,.52,.008,walnut,closet,.003);
+  }
+  closedCabinet(2.00,1.20,1.20,.34,1.94,0,'Children toy storage');
+  // Low play equipment fits within the padded area, clear of both balcony routes.
+  rug(1.58,2.50,1.58,1.55,cream);
+  for(let row=0;row<4;row++)for(let col=0;col<4;col++)box(1.58+(col-1.5)*.38,.070,2.50+(row-1.5)*.38,.365,.035,.365,(row+col)%3===0?blush:(row+col)%3===1?cream:olive,furniture,.035);
+  const play=group(1.58,2.575);play.name='Children climbing frame';
+  for(const xx of [-.35,.35]){
+   beam([xx,.09,-.50],[xx,.68,-.21],.04,wood,play);
+   beam([xx,.09,.07],[xx,.68,-.21],.04,wood,play);
+  }
+  for(let i=0;i<6;i++){
+   const y=.14+i*.095,t=(y-.09)/.59;
+   for(const zz of [-.50+t*.29,.07-t*.28])beam([-.35,y,zz],[.35,y,zz],.027,walnut,play);
+  }
+  const ramp=box(0,.395,.1925,.54,.035,Math.hypot(.685,.49),wood,play,.012);ramp.rotation.x=Math.atan2(.49,.685);
+  for(const xx of [-.285,.285])beam([xx,.71,-.15],[xx,.22,.535],.028,wood,play);
+  rectObstacle(1.58,2.575,.78,1.13,0,'Children climbing frame');
+  const seat=group(.28,1.76,Math.PI/2);seat.name='Children reading seat';
+  box(0,.20,0,.52,.36,.48,walnut,seat,.04);box(0,.43,.01,.52,.16,.48,cream,seat,.07);
+  box(0,.66,-.18,.52,.48,.12,olive,seat,.07);box(.04,.68,-.06,.32,.28,.12,blush,seat,.065);
+  rectObstacle(.28,1.76,.52,.50,Math.PI/2,'Children reading seat');
+  closedCabinet(.17,1.76,.50,.24,.65,Math.PI/2,'Reading wall cabinet',1.12);
+  const sconce=group(3.20,1.055);sconce.name='Children reading light';
+  box(0,1.89,0,.12,.30,.035,bronze,sconce,.022);sphere(0,1.88,.095,.085,glow,sconce);
+  linenPendant(2.35,2.50);
+ }
+ function gamingRoom(){
+  wovenRug(5.80,1.57,2.80,2.15);
+  const work=desk(4.35,1.82,Math.PI/2,1.60);work.name='Gaming desk';
+  // Drawers face the room at the north end, clear of the open entrance door.
+  box(.53,.385,0,.43,.67,.54,walnut,work,.012);
+  for(let row=0;row<3;row++){
+   box(.53,.17+row*.215,.277,.40,.195,.025,ivory,work,.009);
+   box(.53,.22+row*.215,.296,.16,.016,.012,bronze,work,.004);
+  }
+  chair(5.24,1.75,-Math.PI/2,olive,true,'Gaming chair').name='Gaming chair';
+  sofa(5.50,.43,2.40,0,olive,.80).name='Gaming sofa';
+  closedCabinet(7.65,1.50,2.96,.60,2.45,-Math.PI/2,'Office storage wall',0,true);
+  closedCabinet(4.17,1.82,1.60,.28,.72,Math.PI/2,'Office wall cabinets',1.68);
+  closedCabinet(6.20,2.80,1.05,.36,.50,Math.PI,'Gaming media cabinet');
+  const table=closedCabinet(6.37,1.87,.65,.42,.40,0,'Office storage table');
+  box(0,.414,0,.65,.028,.42,travertine,table,.012);
+  const tv=group(6.40,2.97,Math.PI);tv.name='Office television';
+  // Screen size is measured across its active 16:9 diagonal, excluding the frame.
+  const diagonal=1.80,screenW=diagonal*16/Math.hypot(16,9),screenH=diagonal*9/Math.hypot(16,9);
+  box(0,1.38,0,screenW+.035,screenH+.035,.045,black,tv,.012).name='Television';
+  box(0,1.38,.027,screenW,screenH,.008,mat('#263b40',.22),tv).name='Office TV screen';
+  rectObstacle(6.40,2.97,screenW+.035,.06,Math.PI,'Office television');
+  fixtures.push({name:'Television',x:6.40,z:2.97,w:screenW,d:.045,rotation:Math.PI});
+  linenPendant(6.10,1.58);
  }
  function outdoorBench(x:number,z:number,w:number,d:number,rot=0){
   const g=group(x,z,rot);g.name='Balcony storage bench';box(0,.24,0,w,.39,d,teak,g,.022);for(let i=0;i<Math.round(w/.085);i++)box(-w/2+.04+i*.085,.25,d/2+.01,.045,.33,.02,walnut,g,.006);
@@ -433,8 +484,10 @@ export function buildHome(artwork?:T.Texture,layout:LayoutVersion='original'){
  slidingWardrobe(6.93,6.80,1.80,.42,'Hall coat wardrobe');
  slidingWardrobe(8.57,3.05,1.00,.60,'Small hall wardrobe');
 
- rug(2.42,2.44,2.7,2.95);bed(2.72,2.24,1.40,2.0);bedside(1.64,1.45);wardrobe(1.55,4.21,2.42,.60,Math.PI);desk(.39,2.30,Math.PI/2,1.20);chair(1.10,2.30,-Math.PI/2,sage,true);art(2.64,1.67,1.075,1.10,.74,0);pendant(2,2.75,.28);
- girlRoom();
+ if(layout==='original'){
+  rug(2.42,2.44,2.7,2.95);bed(2.72,2.24,1.40,2.0);bedside(1.64,1.45);wardrobe(1.55,4.21,2.42,.60,Math.PI);desk(.39,2.30,Math.PI/2,1.20);chair(1.10,2.30,-Math.PI/2,sage,true);art(2.64,1.67,1.075,1.10,.74,0);pendant(2,2.75,.28);
+  girlRoom();
+ }else{childrenRoom();gamingRoom();}
  // The west wall holds storage and leaves both master balcony doors clear.
  if(layout==='social')socialLiving();
  else{rug(12.4,1.65,3.15,2.64);bed(13.02,1.51,1.8,2.1,-Math.PI/2);bedside(13.62,.28);wardrobe(10.65,1.25,2.40,.60,Math.PI/2);art(14.10,1.67,1.5,1.2,.75,-Math.PI/2);pendant(11.15,1.5,.26);}

@@ -2,6 +2,8 @@ import {build} from 'esbuild';
 import assert from 'node:assert/strict';
 import {mkdir} from 'node:fs/promises';
 import {measureFurniture} from './measure-furniture.mjs';
+import {verifyFamilyRooms} from './verify-family-rooms.mjs';
+import {verifyClosedStorage} from './verify-closed-storage.mjs';
 import * as T from 'three';
 
 await mkdir('tmp',{recursive:true});
@@ -14,13 +16,15 @@ const original=buildHome(undefined,'original');
 const suite=buildHome(undefined,'suite');
 const social=buildHome(undefined,'social');
 const clear=(home,x,z,furnished=true)=>canOccupy(x,z,home.obstacles,home.polygons,furnished);
+for(const home of [original,suite,social]){home.root.updateMatrixWorld(true);verifyClosedStorage(home);}
+for(const home of [suite,social])console.log(home.layout,verifyFamilyRooms(home,canOccupy));
 
 assert.equal(clear(suite,4.925,5.5,false),false,'The new bedroom wall closes the living room');
 assert.equal(clear(original,4.925,5.5,false),true,'The original living room remains open');
 assert.equal(suite.obstacles.filter(o=>o.name==='Office desk').length,1,'The living office becomes a dressing room');
 assert.equal(original.obstacles.filter(o=>o.name==='Office desk').length,2,'Both original offices remain');
-assert.equal(suite.obstacles.filter(o=>o.name==='Bed').length,3,'The suite adds an adult bed');
-assert.equal(suite.fixtures.filter(o=>o.name==='Television').length,0,'Bedroom storage replaces the suite TV');
+assert.equal(suite.obstacles.filter(o=>o.name==='Bed').length,2,'The suite keeps two adult beds');
+assert.equal(suite.fixtures.filter(o=>o.name==='Television').length,1,'The gaming room has a TV');
 assert.ok(suite.obstacles.some(o=>o.name==='Suite extra dressing'),'The suite has additional dressing storage');
 const partitions=suite.obstacles.filter(o=>o.name==='Suite partition');
 assert.ok(partitions.length>=3,'The enclosure includes its north return and doorway');
@@ -34,9 +38,9 @@ const measured=measureFurniture(suite);
 social.root.updateMatrixWorld(true);
 measureFurniture(social);
 assert.ok(social.rooms.some(r=>r.id==='dining')&&!social.rooms.some(r=>r.id==='master'),'Dining replaces the east bedroom');
-assert.equal(social.obstacles.filter(o=>o.name==='Bed').length,2,'The west suite and guest bed remain');
-assert.equal(social.fixtures.filter(o=>o.name==='Television').length,1,'Only the east living room has a TV');
-assert.equal(social.fixtures.find(o=>o.name==='Television').w,1.60,'The living TV is 160 cm wide');
+assert.equal(social.obstacles.filter(o=>o.name==='Bed').length,1,'The west suite keeps its adult bed');
+assert.equal(social.fixtures.filter(o=>o.name==='Television').length,2,'The living and gaming rooms have TVs');
+assert.equal(social.fixtures.find(o=>o.name==='Television'&&o.x>8).w,1.60,'The living TV is 160 cm wide');
 assert.ok(social.obstacles.some(o=>o.name==='Suite extra dressing'),'Version 3 keeps the extra dressing');
 for(const name of ['Retained concrete column','Service shaft'])assert.deepEqual(social.obstacles.filter(o=>o.name===name),original.obstacles.filter(o=>o.name===name),`${name} stays in place in version 3`);
 for(const point of [[10.5,3.66],[10.5,3.86],[11.9,3.66]]){
@@ -52,15 +56,16 @@ assert.ok(Math.abs(new T.Box3().setFromObject(islandWall,true).max.y-1.35)<1e-6,
 const kitchenGroup=social.furniture.getObjectByName('Kitchen counter');
 assert.ok(new T.Box3().setFromObject(kitchenGroup,true).max.y<1.01,'No upper cabinet or backsplash closes the island opening');
 const dining=social.obstacles.find(o=>o.name==='Dining table');
-const sofa=social.obstacles.find(o=>o.name==='Sofa');
+const sofa=social.obstacles.find(o=>o.name==='Sofa'&&o.x>8);
 const counter=social.obstacles.find(o=>o.name==='Kitchen counter');
 assert.ok(dining.z<3.6,'The table is in the former bedroom');
 assert.equal(social.obstacles.filter(o=>o.name==='Dining chair').length,6,'Dining keeps six seats');
 assert.ok(sofa.z-sofa.d/2-(counter.z+counter.d/2)>=1,'The sofa leaves a one metre kitchen aisle');
 assert.ok(14.2-(counter.x+counter.w/2)>=1,'The kitchen leaves an east passage at least one metre wide');
 for(const home of [original,suite,social]){
- const cabinet=home.furniture.getObjectByName('Child wardrobe');
- assert.ok(Math.abs(cabinet.rotation.y-Math.PI/2)<1e-8,'The child wardrobe faces away from the toy shelf');
+ const cabinet=home.furniture.getObjectByName(home.layout==='original'?'Child wardrobe':'Children sliding wardrobe');
+ if(home.layout==='original')
+ assert.ok(Math.abs(cabinet.rotation.y-Math.PI/2)<1e-8,'The child wardrobe faces into the room beside the closed toy cabinet');
  assert.equal(clear(home,cabinet.position.x,cabinet.position.z),true,'Movement ignores the wall cabinet in every layout');
  const table=home.obstacles.find(o=>o.name==='Dining table');
  assert.equal(clear(home,table.x,table.z),false,'The free-standing table remains solid in every layout');
