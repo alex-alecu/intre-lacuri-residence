@@ -13,7 +13,7 @@ import {sitePath} from '@/lib/site-path';
 export default function Home() {
   const host = useRef<HTMLDivElement>(null);
   const model = useRef<HomeScene|null>(null);
-  const [layout,setLayout] = useState<LayoutVersion>('suite');
+  const [layout,setLayout] = useState<LayoutVersion>('social');
   const {rooms,footprints:roomFootprints} = getLayout(layout);
   const [mode, setMode] = useState('overview');
   const [selected, setSelected] = useState('living');
@@ -44,7 +44,7 @@ export default function Home() {
       if (cancelled || !host.current) return;
       try {
         const requested=new URLSearchParams(window.location.search).get('layout');
-        const initialLayout=isLayoutVersion(requested)?requested:'suite';
+        const initialLayout=isLayoutVersion(requested)?requested:'social';
         model.current = new HomeScene(host.current, {onLock:setLocked, onPosition:setPosition, onContextChange:setContextLost},initialLayout);
         setLayout(initialLayout);
         setReady(true);
@@ -104,7 +104,7 @@ export default function Home() {
     }
   };
   const room = rooms.find(r=>r.id===selected)!;
-  const roomIcon = selected==='kitchen' ? <CookingPot/> : selected==='dressing' ? <Shirt/> : ['master','daughter','guest'].includes(selected)||(selected==='living'&&layout==='suite') ? <BedDouble/> : <Armchair/>;
+  const roomIcon = selected==='kitchen' ? <CookingPot/> : selected==='dressing' ? <Shirt/> : ['master','daughter','guest'].includes(selected)||(selected==='living'&&layout!=='original') ? <BedDouble/> : <Armchair/>;
   const roomList = () => <nav aria-label="Încăperi" className="room-list">{rooms.filter(r=>r.primary).map((r,i)=><button key={r.id} className={`room-button ${selected===r.id?'selected':''}`} aria-current={selected===r.id?'location':undefined} onClick={()=>selectRoom(r.id)}><span className="room-number">{String(i+1).padStart(2,'0')}</span><span className="room-text"><strong>{r.name}</strong><small>{r.detail}</small></span><ChevronRight size={16}/></button>)}</nav>;
   const instructions = touch
     ? mode==='walk'?'Ține apăsate săgețile pentru deplasare. Trage pe imagine pentru privire.':mode==='plan'?'Trage cu un deget. Apropie sau depărtează două degete pentru zoom.':'Un deget: rotire · Două degete: zoom și deplasare'
@@ -117,16 +117,16 @@ export default function Home() {
       <div className="header-actions"><button className="room-menu-trigger" aria-haspopup="dialog" aria-expanded={roomsOpen} onClick={()=>changeRoomsOpen(true)}><DoorOpen/>Încăperi</button><button className="plain-button" onClick={openNotes} aria-label="Despre amenajare"><FileText size={16}/><span>Despre amenajare</span><ArrowUpRight size={15}/></button></div>
     </header>
     <div className="layout-bar">
-      <div className="layout-heading"><strong>Compară amenajările</strong><span>Aceeași perspectivă pentru ambele variante.</span></div>
+      <div className="layout-heading"><strong>Compară amenajările</strong><span>Aceeași perspectivă pentru cele trei variante.</span></div>
       <ToggleGroup className="layout-switch" aria-label="Varianta de amenajare" value={[layout]} onValueChange={values=>{if(isLayoutVersion(values[0]))changeLayout(values[0]);}}>
         {layoutOptions.map(option=><ToggleGroupItem key={option.id} value={option.id} disabled={!ready||contextLost} aria-label={`${option.number} ${option.name}`}><span className="layout-number">{option.number}</span>{option.name}</ToggleGroupItem>)}
       </ToggleGroup>
-      <span className="layout-detail" aria-live="polite">{layout==='suite'?'Perete nou de 15 cm · Dressing deschis':'Amenajarea inițială'}</span>
+      <span className="layout-detail" aria-live="polite">{layout==='social'?'Insulă · Dining separat · TV 160 cm':layout==='suite'?'Perete nou de 15 cm · Dressing deschis':'Amenajarea inițială'}</span>
     </div>
     <div className="workspace">
       <aside className="room-panel">
         <div className="panel-heading"><span className="eyebrow">LOCUINȚA NOASTRĂ</span><h1>Loc pentru<br/>fiecare dintre noi.</h1><p>Materiale naturale. Confort. Liniște.</p></div>
-        <div className="area-stats"><div><strong>{layout==='suite'?'4':'3'}</strong><span>Dormitoare</span></div><div><strong>{layout==='suite'?'1':'2'}</strong><span>{layout==='suite'?'Birou':'Birouri'}</span></div><div><strong>{layout==='suite'?'1':'8'}</strong><span>{layout==='suite'?'Dressing deschis':'Locuri la masă'}</span></div></div>
+        <div className="area-stats"><div><strong>{layout==='suite'?'4':'3'}</strong><span>Dormitoare</span></div><div><strong>{layout!=='original'?'1':'2'}</strong><span>{layout!=='original'?'Birou':'Birouri'}</span></div><div><strong>{layout!=='original'?'1':'6'}</strong><span>{layout!=='original'?'Dressing deschis':'Locuri la masă'}</span></div></div>
         <div className="room-list-label"><span>EXPLOREAZĂ LOCUINȚA</span></div>
         {roomList()}
         <div className="connection-note"><DoorOpen size={20}/><div><strong>O singură locuință</strong><p>Cele două holuri sunt unite printr-un pasaj interior.</p><button onClick={()=>selectRoom('connection')}>Vezi legătura <ArrowUpRight size={13}/></button></div></div>
@@ -148,17 +148,17 @@ export default function Home() {
     </div>
     <Sheet open={roomsOpen} onOpenChange={changeRoomsOpen}><SheetContent side="left" className="rooms-sheet" showCloseButton={false}><SheetClose className="notes-close" aria-label="Închide"><X size={20}/></SheetClose><SheetTitle>Încăperi</SheetTitle><SheetDescription>Alege un loc pentru a muta perspectiva.</SheetDescription>{roomList()}<button className="connection-link" onClick={()=>selectRoom('connection')}><DoorOpen/>Vezi pasajul interior<ChevronRight/></button></SheetContent></Sheet>
     <Sheet open={notes} onOpenChange={setNotes}><SheetContent className="source-sheet" showCloseButton={false}><SheetClose className="notes-close" aria-label="Închide"><X size={20}/></SheetClose><SheetTitle>Despre amenajare</SheetTitle><SheetDescription>O locuință gândită pentru întreaga familie.</SheetDescription><div className="source-body">
-      <h3>Bucătărie și loc de luat masa</h3><p>Bucătăria spațioasă ocupă fostul salon din apartamentul din dreapta. Masa de 1,90 × 0,90 m are șase scaune tapițate. Un colțar verde-salvie de 2,45 × 2,00 m și o măsuță ovală creează un al doilea loc de relaxare, fără televizor. Dulapurile până la tavan, sertarele adânci și electrocasnicele integrate păstrează blatul liber.</p>
-      {layout==='suite'?<>
-        <h3>Dormitor matrimonial și dressing deschis</h3><p>Fostul living devine dormitor, cu pat de 2 × 2 m, tăblie tapițată, două noptiere și televizor. Peretele nou de 15 cm are o întoarcere scurtă spre camera de oaspeți. Ușa de 1 m se deschide în dormitor. Holul comun păstrează accesul la baie și la celelalte camere.</p>
+      {layout==='social'?<><h3>Living, dining și insulă</h3><p>Masa pentru șase persoane se mută în fostul dormitor de est. Peretele dintre camere se păstrează la 1,35 m, cu un blat de piatră deasupra. Blatul de lucru al bucătăriei rămâne la 95 cm. Structura din stânga rămâne întreagă, cu finisaj din nuc. O trecere de 1,05 m leagă încăperile în est.</p><h3>Loc pentru relaxare</h3><p>Canapeaua dreaptă de 2,60 m stă cu spatele spre bucătărie. Un culoar de lucru de aproximativ 1 m rămâne în spate. Televizorul de pe peretele opus are lățimea de 160 cm. Măsuța compactă păstrează trecerea liberă. Dulapurile suspendate dispar de deasupra insulei.</p><h3>Structura păstrată</h3><p>Modelul păstrează elementul din stânga și toate ghenele. Dimensiunile structurii trebuie confirmate pe șantier. Reducerea peretelui și trecerea nouă trebuie verificate de un inginer structurist înainte de lucrări.</p></>:<><h3>Bucătărie și loc de luat masa</h3><p>Bucătăria spațioasă ocupă fostul salon din apartamentul din dreapta. Masa de 1,90 × 0,90 m are șase scaune tapițate. Un colțar verde-salvie de 2,45 × 2,00 m și o măsuță ovală creează un al doilea loc de relaxare, fără televizor. Dulapurile până la tavan, sertarele adânci și electrocasnicele integrate păstrează blatul liber.</p></>}
+      {layout!=='original'?<>
+        <h3>Dormitor matrimonial și dressing deschis</h3><p>Fostul living devine dormitor, cu pat de 2 × 2 m, tăblie tapițată, două noptiere și dulapuri suplimentare în locul televizorului. Peretele nou de 15 cm are o întoarcere scurtă spre camera de oaspeți. Ușa de 1 m se deschide în dormitor. Holul comun păstrează accesul la baie și la celelalte camere.</p>
         <h3>Un dressing în locul biroului</h3><p>Dressingul deschis se extinde din fostul birou spre dormitor. Două corpuri din nuc, de 2,20 m și 1,60 m, au o adâncime de 60 cm. Rafturile luminate, barele pentru haine, sertarele, oglinda înaltă și taburetul tapițat completează spațiul. Fereastra rămâne liberă.</p>
-        <h3>Spațiu pentru trecere</h3><p>Planul propus păstrează aproximativ 81 cm pe latura de est a patului și 90 cm între pat și mobilierul TV. Holul din dreptul băii are aproximativ 1,08 m. Suprafața închisă este de aproximativ 20,94 m², inclusiv zona de dressing de 5,69 m². Valorile sunt calculate din model și trebuie verificate la fața locului.</p>
+        <h3>Spațiu pentru trecere</h3><p>Planul propus păstrează aproximativ 81 cm pe latura de est a patului și 75 cm între pat și dulapurile de 36 cm adâncime. Acestea au rafturi pentru haine împăturite; barele pentru umerașe rămân în dressing. Holul din dreptul băii are aproximativ 1,08 m. Suprafața închisă este de aproximativ 20,94 m², inclusiv zona de dressing de 5,69 m². Valorile sunt calculate din model și trebuie verificate la fața locului.</p>
       </>:<><h3>Un living pentru relaxare</h3><p>Canapeaua verde-salvie, cele două fotolii crem și măsuța ovală din lemn completează zona cu televizor. Canapeaua ajunge la capătul peretelui din spate, în locul lampadarului. Un fotoliu este mutat lateral pentru a elibera zona televizorului. Mobilierul din lemn și textilele naturale completează zona de relaxare. Al doilea birou se află în locul fostei bucătării, integrat în mobilier.</p></>}
       <h3>Depozitare în hol</h3><p>Holul către bucătărie are un dulap pentru paltoane, jachete și încălțăminte. Ușile glisante păstrează trecerea liberă.</p>
       <h3>Camera fetiței</h3><p>Patul-căsuță are un cadru din lemn și lumină caldă. Norii luminoși, rafturile cu cărți, cutiile pentru jucării și cortul de lectură completează spațiul de joacă. Textilele crem și roz pudrat păstrează atmosfera calmă.</p>
       <h3>Balcoane verzi</h3><p>Băncile cu spațiu de depozitare, pernele de exterior, jardinierele și panourile cu plante transformă balcoanele în locuri de relaxare. Mobilierul este așezat lângă clădire, iar traseele către uși rămân libere.</p>
       <h3>Uși și băi</h3><p>Ușa camerei de oaspeți este pe peretele dinspre hol, aproape de deschiderea din planul etajului. Golul nedorit din peretele băii a fost închis. Căzile, lavoarele și vasele WC sunt orientate conform planurilor.</p>
-      <h3>Despre model</h3><p>Modelul urmărește conturul și pozițiile pereților din documentele furnizate. Unele detalii și înălțimea camerelor sunt estimări. Deschiderea dintre apartamente este o propunere și trebuie verificată de un inginer structurist înainte de lucrări.</p>
+      <h3>Plimbare</h3><p>Mobilierul aflat la cel mult 20 cm de un perete nu oprește deplasarea. Mobilierul separat de pereți rămâne un obstacol. Pereții, structura și insula rămân solide.</p><h3>Despre model</h3><p>Modelul urmărește conturul și pozițiile pereților din documentele furnizate. Unele detalii și înălțimea camerelor sunt estimări. Deschiderea dintre apartamente este o propunere și trebuie verificată de un inginer structurist înainte de lucrări.</p>
     </div></SheetContent></Sheet>
   </main>;
 }
