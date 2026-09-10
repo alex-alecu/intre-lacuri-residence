@@ -336,81 +336,81 @@
       "depth": 0.736
     },
     {
-      "name": "Dining sideboard",
-      "x": 9.1,
-      "z": 7.83,
-      "width": 1.38,
-      "depth": 0.3
-    },
-    {
       "name": "Dining table",
-      "x": 10.2,
-      "z": 6.35,
+      "x": 13.05,
+      "z": 6.2,
       "width": 1.9,
       "depth": 0.9
     },
     {
       "name": "Dining chair",
-      "x": 9.729999999999999,
-      "z": 5.77,
+      "x": 12.47,
+      "z": 6.67,
       "width": 0.5,
       "depth": 0.505
     },
     {
       "name": "Dining chair",
-      "x": 9.729999999999999,
-      "z": 6.93,
+      "x": 13.47,
+      "z": 6.67,
       "width": 0.5,
       "depth": 0.505
     },
     {
       "name": "Dining chair",
-      "x": 10.67,
-      "z": 5.77,
+      "x": 12.47,
+      "z": 5.73,
       "width": 0.5,
       "depth": 0.505
     },
     {
       "name": "Dining chair",
-      "x": 10.67,
-      "z": 6.93,
+      "x": 13.47,
+      "z": 5.73,
       "width": 0.5,
       "depth": 0.505
     },
     {
       "name": "Dining chair",
-      "x": 8.95,
-      "z": 6.35,
+      "x": 13.05,
+      "z": 7.2,
       "width": 0.5,
       "depth": 0.505
     },
     {
       "name": "Dining chair",
-      "x": 11.45,
-      "z": 6.35,
+      "x": 13.05,
+      "z": 5.2,
       "width": 0.5,
       "depth": 0.505
     },
     {
       "name": "Sofa",
-      "x": 12.675,
-      "z": 7.525,
-      "width": 2.45,
+      "x": 10.525,
+      "z": 5.85,
+      "width": 2.1,
       "depth": 0.85
     },
     {
       "name": "Sofa return",
-      "x": 13.475,
-      "z": 6.525,
+      "x": 9.9,
+      "z": 6.675,
       "width": 0.85,
-      "depth": 1.15
+      "depth": 0.8
     },
     {
       "name": "Coffee table",
-      "x": 12.37,
-      "z": 6.3,
+      "x": 11.25,
+      "z": 6.98,
       "width": 0.5,
-      "depth": 0.7
+      "depth": 0.5
+    },
+    {
+      "name": "Dining media cabinet",
+      "x": 11.25,
+      "z": 7.78,
+      "width": 1.82,
+      "depth": 0.415
     },
     {
       "name": "Hall coat wardrobe",
@@ -617,12 +617,12 @@
     },
     "extraSofaRoom": "east dining",
     "cornerSofa": {
-      "width": 2.45,
-      "depth": 2
+      "width": 2.1,
+      "depth": 1.65
     },
     "diningCoffeeTable": {
       "width": 0.5,
-      "depth": 0.7
+      "depth": 0.5
     },
     "coatWardrobe": {
       "width": 1.8,
@@ -635,7 +635,11 @@
       "height": 2.4,
       "fronts": "sliding"
     },
-    "televisions": 1,
+    "televisions": 2,
+    "diningTelevision": {
+      "diagonal": 1.8,
+      "aspectRatio": "16:9"
+    },
     "livingSofa": {
       "width": 3.15,
       "rearWallEastEdge": 3.875
@@ -645,14 +649,14 @@
   "smallHallClearance": 1.33,
   "coatHallClearance": 0.86,
   "diningCoffeeClearances": {
-    "mainSofa": 0.45,
-    "sofaReturn": 0.43,
-    "diningChair": 0.38
+    "mainSofa": 0.455,
+    "sofaReturn": 0.675,
+    "diningChair": 0.68
   },
-  "kitchenWorkAisle": 1.01,
-  "diningSofaGap": 0.475,
-  "diningSouthAisle": {
-    "value": 0.78,
+  "kitchenWorkAisle": 0.955,
+  "diningSofaGap": 0.605,
+  "diningEastAisle": {
+    "value": 0.44,
     "status": "Model clearance with chairs in the shown position; not a pulled-out chair test."
   },
   "rooms": [
@@ -740,7 +744,7 @@
       "measurement": "5.95 × 4.275 m + entry recess",
       "primary": true,
       "detail": "Gătit și mese împreună",
-      "description": "Masă din lemn pentru șase persoane, colțar generos și măsuță de cafea.",
+      "description": "Masă pentru șase persoane lângă fereastră, rotită cu 90°. Canapea cu spatele spre bucătărie și televizor cu diagonala de 180 cm pe peretele de sud.",
       "visit": [
         9.65,
         4.95

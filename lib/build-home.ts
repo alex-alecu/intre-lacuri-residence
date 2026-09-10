@@ -159,7 +159,7 @@ export function buildHome(artwork?:T.Texture,layout:LayoutVersion='original'){
   book(-.12,.435,0,.24,.03,.20,g,cream);vase(Math.min(.20,w/2-.075),.415,-.02,.06,g);rectObstacle(x,z,w,d,0,'Coffee table');contact(x,z,w+.3,d+.3);
  }
  function chair(x:number,z:number,rot=0,color=sage,desk=false,name='Chair'){const g=group(x,z,rot);box(0,.47,0,.5,.13,.49,color,g,.075);box(0,.72,-.20,.5,.50,.12,color,g,.07);if(desk){cylinder(0,.25,0,.035,.43,black,g);for(let i=0;i<5;i++){const a=i*Math.PI*2/5,o=box(Math.sin(a)*.12,.07,Math.cos(a)*.12,.035,.035,.28,black,g);o.rotation.y=a;cylinder(Math.sin(a)*.25,.05,Math.cos(a)*.25,.033,.035,black,g)}}else for(const xx of [-.18,.18])for(const zz of [-.17,.17])box(xx,.23,zz,.035,.44,.035,wood,g);rectObstacle(x,z,.55,.58,rot,name);contact(x,z,.8,.8);return g}
- function desk(x:number,z:number,rot=0,w=1.5){const g=group(x,z,rot);box(0,.755,0,w,.055,.68,wood,g,.018);for(const xx of [-w/2+.09,w/2-.09]){box(xx,.37,0,.04,.73,.56,black,g);box(xx,.73,0,.035,.035,.61,black,g)}box(0,1.09,-.18,.62,.36,.035,black,g,.014);box(0,1.09,-.158,.57,.31,.009,mat('#68767a',.35),g);box(0,.89,-.18,.04,.22,.035,black,g);box(0,.798,-.13,.24,.015,.15,black,g);box(0,.796,.15,.4,.018,.14,mat('#a3a5a0'),g,.008);box(.31,.798,.17,.07,.025,.1,black,g,.018);book(-w/2+.20,.78,-.10,.21,.026,.29,g,sage);cylinder(.52,.83,-.15,.047,.11,white,g);rectObstacle(x,z,w,.68,rot,'Office desk');contact(x,z,w+.3,1);return g}
+ function desk(x:number,z:number,rot=0,w=1.5,name='Office desk'){const g=group(x,z,rot);box(0,.755,0,w,.055,.68,wood,g,.018);for(const xx of [-w/2+.09,w/2-.09]){box(xx,.37,0,.04,.73,.56,black,g);box(xx,.73,0,.035,.035,.61,black,g)}box(0,1.09,-.18,.62,.36,.035,black,g,.014);box(0,1.09,-.158,.57,.31,.009,mat('#68767a',.35),g);box(0,.89,-.18,.04,.22,.035,black,g);box(0,.798,-.13,.24,.015,.15,black,g);box(0,.796,.15,.4,.018,.14,mat('#a3a5a0'),g,.008);box(.31,.798,.17,.07,.025,.1,black,g,.018);book(-w/2+.20,.78,-.10,.21,.026,.29,g,sage);cylinder(.52,.83,-.15,.047,.11,white,g);rectObstacle(x,z,w,.68,rot,name);contact(x,z,w+.3,1);return g}
  function wardrobe(x:number,z:number,w:number,d:number,rot=0){const g=group(x,z,rot);box(0,1.17,0,w,2.34,d,wood,g,.012);const count=Math.round(w/.55);for(let i=0;i<count;i++){box(-w/2+(i+.5)*w/count,1.19,d/2+.013,w/count-.018,2.25,.025,mat('#c9bea6'),g,.008);box(-w/2+(i+.85)*w/count,1.14,d/2+.038,.012,.32,.016,brass,g)}rectObstacle(x,z,w,d,rot,'Wardrobe');contact(x,z,w+.25,d+.3)}
  function bed(x:number,z:number,w:number,d:number,rot=0,child=false){const g=group(x,z,rot),h=child?.24:.43;
   box(0,h-.12,0,w+.13,.26,d+.12,wood,g,.045);box(0,h+.06,0,w,.24,d,linen,g,.1);box(0,child?.48:.67,-d/2-.045,w+.18,child?.85:1.25,.12,child?wood:sage,g,.04);
@@ -184,20 +184,22 @@ export function buildHome(artwork?:T.Texture,layout:LayoutVersion='original'){
   rectObstacle(x,z,w,depth,rot,'Sofa');contact(x,z,w+.4,depth+.4);return g
  }
  function diningCornerSofa(){
-  // Two joined seating wings. Their separate bounds keep the inside corner open.
-  const main=group(12.675,7.525);main.name='Dining corner sofa';
-  box(0,.30,0,2.45,.42,.85,olive,main,.095);box(0,.70,.35,2.45,.60,.15,olive,main,.065);
-  box(-1.145,.53,0,.16,.48,.85,olive,main,.06);box(1.14,.70,0,.17,.60,.85,olive,main,.06);
-  for(const xx of [-.69,.04]){box(xx,.535,-.04,.70,.16,.61,olive,main,.065);box(xx,.80,.225,.42,.36,.15,cream,main,.07)}
-  box(.80,.535,-.04,.69,.16,.61,olive,main,.065);box(-.66,.63,-.13,.42,.025,.55,linen,main,.02);
-  rectObstacle(12.675,7.525,2.45,.85,0,'Sofa');contact(12.675,7.525,2.6,1.05);
-  const side=group(13.475,6.525);side.name='Dining sofa return';
-  box(0,.30,0,.85,.42,1.15,olive,side,.095);box(.35,.70,0,.15,.60,1.15,olive,side,.065);
-  box(0,.53,-.49,.85,.48,.17,olive,side,.06);
-  for(const zz of [-.175,.335])box(-.04,.535,zz,.61,.16,.46,olive,side,.065);
-  box(.225,.80,.15,.15,.36,.40,blush,side,.065);
-  rectObstacle(13.475,6.525,.85,1.15,0,'Sofa return');contact(13.475,6.525,1.05,1.35);
-  fixtures.push({name:'Dining corner sofa',x:12.675,z:6.95,w:2.45,d:2.00,rotation:0});
+  // Keep full seat depth in both wings of the compact 2.10 by 1.65 m corner sofa.
+  const x=10.525,z=5.85,rotation=Math.PI;
+  const main=group(x,z,rotation);main.name='Dining corner sofa';
+  box(0,.30,0,2.10,.42,.85,olive,main,.095);box(0,.70,.35,2.10,.60,.15,olive,main,.065);
+  box(-.97,.53,0,.16,.48,.85,olive,main,.06);box(.965,.70,0,.17,.60,.85,olive,main,.06);
+  for(const xx of [-.61,0,.61])box(xx,.535,-.04,.58,.16,.61,olive,main,.065);
+  for(const xx of [-.55,.12])box(xx,.80,.225,.42,.36,.15,cream,main,.07);
+  box(-.50,.63,-.13,.42,.025,.55,linen,main,.02);
+  rectObstacle(x,z,2.10,.85,rotation,'Sofa');contact(x,z,2.3,1.05);
+  const side=group(x-.625,z+.825,rotation);side.name='Dining sofa return';
+  box(0,.30,0,.85,.42,.80,olive,side,.095);box(.35,.70,0,.15,.60,.80,olive,side,.065);
+  box(0,.53,-.315,.85,.48,.17,olive,side,.06);
+  box(-.04,.535,.07,.61,.16,.62,olive,side,.065);
+  box(.225,.80,.12,.15,.36,.40,blush,side,.065);
+  rectObstacle(x-.625,z+.825,.85,.80,rotation,'Sofa return');contact(x-.625,z+.825,1.05,1.00);
+  fixtures.push({name:'Dining corner sofa',x,z:z+.40,w:2.10,d:1.65,rotation});
  }
  function storage(x:number,z:number,w:number,d:number,rot=0,h=2.54,name='Storage cabinet',finish=ivory){
   const g=group(x,z,rot);g.name=name;box(0,h/2,0,w,h,d,walnut,g,.014);box(0,.055,d/2+.003,w-.07,.10,.014,black,g);
@@ -237,27 +239,40 @@ export function buildHome(artwork?:T.Texture,layout:LayoutVersion='original'){
   box(-.42,1.34,.379,.012,.85,.025,bronze,towers);box(.43,1.3,.379,.012,.32,.025,bronze,towers);
   rectObstacle(x,z,w+.06,d+.05,0,'Kitchen counter');
   if(!open){const tray=group(13.68,4.08);box(0,.96,0,.46,.02,.30,walnut,tray,.035);cylinder(-.12,1.075,0,.075,.22,white,tray);cylinder(.10,1.04,0,.07,.15,clay,tray);vase(14.0,.95,4.27,.075);}
+  if(open){
   const sideboard=group(9.1,7.83,Math.PI);sideboard.scale.z=.30/.449;box(0,.49,0,1.35,.64,.40,walnut,sideboard,.012);
   for(const xx of [-.58,.58])for(const zz of [-.15,.15])box(xx,.12,zz,.035,.24,.035,walnut,sideboard);
   for(const xx of [-.335,.335]){box(xx,.49,.208,.62,.54,.024,wood,sideboard);for(let i=0;i<10;i++)box(xx-.27+i*.06,.49,.225,.016,.51,.008,walnut,sideboard);for(let i=0;i<8;i++)box(xx,.26+i*.065,.23,.60,.014,.008,walnut,sideboard)}
   box(0,.83,0,1.38,.045,.43,walnut,sideboard,.012);rectObstacle(9.1,7.83,1.38,.30,Math.PI,'Dining sideboard');vase(9.47,.86,7.84,.07);
   const mirror=new T.Group();mirror.position.set(9.1,1.65,7.974);mirror.rotation.y=Math.PI;upper.add(mirror);mesh(new T.TorusGeometry(.43,.016,8,56),black,mirror);mesh(new T.CircleGeometry(.417,56),mat('#b5c3b7',.12,.88),mirror).position.z=.008;
+  }
  }
  function grandDining(){
-  const open=layout==='social',x=open?12.20:10.20,z=open?1.65:6.35,g=group(x,z);g.name='Six seat dining table';
-  wovenRug(x,z,2.9,2.05);box(0,.76,0,1.90,.065,.90,walnut,g,.045);
-  for(const xx of [-.73,.73])for(const zz of [-.28,.28])box(xx,.375,zz,.07,.72,.07,walnut,g,.01);
-  for(const xx of [x-.47,x+.47]){chair(xx,z-.58,0,cream,false,'Dining chair');chair(xx,z+.58,Math.PI,cream,false,'Dining chair')}
-  chair(x-1.25,z,Math.PI/2,cream,false,'Dining chair');chair(x+1.25,z,-Math.PI/2,cream,false,'Dining chair');
+  const open=layout==='social',x=open?12.20:13.05,z=open?1.65:6.20,rotation=open?0:Math.PI/2,g=group(x,z,rotation);g.name='Six seat dining table';
+  const point=(xx:number,zz:number)=>[x+xx*Math.cos(rotation)+zz*Math.sin(rotation),z-xx*Math.sin(rotation)+zz*Math.cos(rotation)] as const;
+  wovenRug(x,z,open?2.9:2.05,open?2.05:2.9);box(0,.76,0,1.90,.065,.90,walnut,g,.045);
+  const legOffset=open?.73:.78,legDepth=open?.28:.31;
+  for(const xx of [-legOffset,legOffset])for(const zz of [-legDepth,legDepth])box(xx,.375,zz,.07,.72,.07,walnut,g,.01);
+  for(const xx of [-.47,.47]){chair(...point(xx,-.58),rotation,cream,false,'Dining chair');chair(...point(xx,open?.58:.42),Math.PI+rotation,cream,false,'Dining chair')}
+  const endSeat=open?1.25:1;
+  chair(...point(-endSeat,0),Math.PI/2+rotation,cream,false,'Dining chair');chair(...point(endSeat,0),-Math.PI/2+rotation,cream,false,'Dining chair');
   box(0,.80,0,1.75,.012,.30,linen,g,.012);cylinder(0,.818,0,.22,.028,wood,g);vase(0,.835,0,.09,g);cylinder(.15,.90,.02,.04,.11,glow,g);
-  rectObstacle(x,z,1.90,.90,0,'Dining table');fixtures.push({name:'Dining table',x,z,w:1.9,d:.9,rotation:0});contact(x,z,2.2,1.2);
-  box(x,2.65,z,.94,.035,.09,black,upper);
+  rectObstacle(x,z,1.90,.90,rotation,'Dining table');fixtures.push({name:'Dining table',x,z,w:1.9,d:.9,rotation});contact(x,z,open?2.2:1.2,open?1.2:2.2);
+  box(x,2.65,z,.94,.035,.09,black,upper).rotation.y=rotation;
   const blueGlass=new T.MeshPhysicalMaterial({color:'#567a82',transparent:true,opacity:.45,roughness:.15,side:T.DoubleSide,depthWrite:false});
-  for(const [xx,y]of [[x-.38,2.14],[x,2.03],[x+.38,2.12]]){cylinder(xx,(2.63+y+.15)/2,z,.006,2.63-y-.15,black,upper);cylinder(xx,y,z,.11,.28,blueGlass,upper);sphere(xx,y-.02,z,.04,glow,upper)}
+  for(const [offset,y]of [[-.38,2.14],[0,2.03],[.38,2.12]]){const [xx,zz]=point(offset,0);cylinder(xx,(2.63+y+.15)/2,zz,.006,2.63-y-.15,black,upper);cylinder(xx,y,zz,.11,.28,blueGlass,upper);sphere(xx,y-.02,zz,.04,glow,upper)}
   const light=new T.PointLight('#ffddb2',1.2,5,2);light.position.set(x,1.94,z);lights.push(light);root.add(light);
   if(open)return;
-  diningCornerSofa();wovenRug(12.70,6.92,2.30,1.95);ovalCoffee(12.37,6.30,.50,.70);
-  botanicalPrint(12.20,1.70,7.96,.55,.74,0,Math.PI);botanicalPrint(13.15,1.70,7.96,.55,.74,1,Math.PI);
+  diningCornerSofa();wovenRug(10.70,6.70,2.8,2.50);ovalCoffee(11.25,6.98,.50,.50);
+  const media=group(11.25,7.78,Math.PI);media.name='Dining media cabinet';
+  box(0,.31,0,1.80,.44,.38,walnut,media,.018);
+  for(const xx of [-.675,-.225,.225,.675])box(xx,.31,.20,.43,.39,.025,ivory,media,.008);
+  box(0,1.36,-.185,1.82,2.60,.035,travertine,media,.008);
+  const diagonal=1.80,screenW=diagonal*16/Math.hypot(16,9),screenH=diagonal*9/Math.hypot(16,9);
+  box(0,1.27,-.11,screenW+.035,screenH+.035,.045,black,media,.012).name='Television';
+  box(0,1.27,-.081,screenW,screenH,.008,mat('#26322e',.2),media).name='Dining TV screen';
+  rectObstacle(11.25,7.78,1.82,.44,Math.PI,'Dining media cabinet');
+  fixtures.push({name:'Television',x:11.25,z:7.89,w:screenW,d:.045,rotation:Math.PI});
  }
  function toilet(x:number,z:number,rot=0,name='WC'){
   const g=group(x,z,rot);g.name=name;
@@ -349,6 +364,9 @@ export function buildHome(artwork?:T.Texture,layout:LayoutVersion='original'){
   box(2.95,.77,4.785,3.12,1.45,.12,cream,furniture,.04);
   for(const x of [1.58,4.32])bedside(x,5.12);
   fixtures.push({name:'Suite king bed',x:2.95,z:5.84,w:2,d:2,rotation:0});
+  const bedroomDesk=desk(.40,6.10,Math.PI/2,1.20,'Bedroom desk');bedroomDesk.name='Bedroom desk';
+  chair(1.05,6.10,-Math.PI/2,sage,true,'Bedroom chair').name='Bedroom chair';
+  fixtures.push({name:'Bedroom desk',x:.40,z:6.10,w:1.20,d:.68,rotation:Math.PI/2});
   // Shallow folded-clothes storage keeps at least 75 cm at the bed foot.
   storage(3.68,7.93,2.20,.36,Math.PI,2.45,'Suite extra dressing');
   closedCabinet(1.14,9.57,2.20,.60,2.45,Math.PI,'Dressing wardrobe south',0,true,true);
@@ -431,28 +449,32 @@ export function buildHome(artwork?:T.Texture,layout:LayoutVersion='original'){
   linenPendant(2.35,2.50);
  }
  function gamingRoom(){
+  const revised=layout==='suite';
   wovenRug(5.80,1.57,2.80,2.15);
-  const work=desk(4.35,1.82,Math.PI/2,1.60);work.name='Gaming desk';
-  // Drawers face the room at the north end, clear of the open entrance door.
-  box(.53,.385,0,.43,.67,.54,walnut,work,.012);
+  const work=revised?desk(4.34,.66,Math.PI/2,1.30):desk(4.35,1.82,Math.PI/2,1.60);work.name='Gaming desk';
+  // Keep the drawers inside the desk and clear of the entrance door.
+  const drawerX=revised?.38:.53;
+  box(drawerX,.385,0,.43,.67,.54,walnut,work,.012);
   for(let row=0;row<3;row++){
-   box(.53,.17+row*.215,.277,.40,.195,.025,ivory,work,.009);
-   box(.53,.22+row*.215,.296,.16,.016,.012,bronze,work,.004);
+   box(drawerX,.17+row*.215,.277,.40,.195,.025,ivory,work,.009);
+   box(drawerX,.22+row*.215,.296,.16,.016,.012,bronze,work,.004);
   }
-  chair(5.24,1.75,-Math.PI/2,olive,true,'Gaming chair').name='Gaming chair';
-  sofa(5.50,.43,2.40,0,olive,.80).name='Gaming sofa';
+  (revised?chair(4.97,.66,-Math.PI/2,olive,true,'Gaming chair'):chair(5.24,1.75,-Math.PI/2,olive,true,'Gaming chair')).name='Gaming chair';
+  (revised?sofa(6.10,1.22,2.40,-Math.PI/2,olive,.80):sofa(5.50,.43,2.40,0,olive,.80)).name='Gaming sofa';
   closedCabinet(7.65,1.50,2.96,.60,2.45,-Math.PI/2,'Office storage wall',0,true);
-  closedCabinet(4.17,1.82,1.60,.28,.72,Math.PI/2,'Office wall cabinets',1.68);
-  closedCabinet(6.20,2.80,1.05,.36,.50,Math.PI,'Gaming media cabinet');
-  const table=closedCabinet(6.37,1.87,.65,.42,.40,0,'Office storage table');
-  box(0,.414,0,.65,.028,.42,travertine,table,.012);
-  const tv=group(6.40,2.97,Math.PI);tv.name='Office television';
+  closedCabinet(4.17,revised?2.14:1.82,1.60,.28,revised?.58:.72,Math.PI/2,'Office wall cabinets',revised?1.92:1.68);
+  if(revised)closedCabinet(4.22,2.14,1.05,.36,.50,Math.PI/2,'Gaming media cabinet');
+  else closedCabinet(6.20,2.80,1.05,.36,.50,Math.PI,'Gaming media cabinet');
+  const tableW=revised?.60:.65,tableD=revised?.36:.42;
+  const table=revised?closedCabinet(5.49,2.13,tableW,tableD,.40,-Math.PI/2,'Office storage table'):closedCabinet(6.37,1.87,tableW,tableD,.40,0,'Office storage table');
+  box(0,.414,0,tableW,.028,tableD,travertine,table,.012);
+  const tv=revised?group(4.04,2.14,Math.PI/2):group(6.40,2.97,Math.PI);tv.name='Office television';
   // Screen size is measured across its active 16:9 diagonal, excluding the frame.
   const diagonal=1.80,screenW=diagonal*16/Math.hypot(16,9),screenH=diagonal*9/Math.hypot(16,9);
   box(0,1.38,0,screenW+.035,screenH+.035,.045,black,tv,.012).name='Television';
   box(0,1.38,.027,screenW,screenH,.008,mat('#263b40',.22),tv).name='Office TV screen';
-  rectObstacle(6.40,2.97,screenW+.035,.06,Math.PI,'Office television');
-  fixtures.push({name:'Television',x:6.40,z:2.97,w:screenW,d:.045,rotation:Math.PI});
+  rectObstacle(tv.position.x,tv.position.z,screenW+.035,.06,tv.rotation.y,'Office television');
+  fixtures.push({name:'Television',x:tv.position.x,z:tv.position.z,w:screenW,d:.045,rotation:tv.rotation.y});
   linenPendant(6.10,1.58);
  }
  function outdoorBench(x:number,z:number,w:number,d:number,rot=0){

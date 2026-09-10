@@ -44,26 +44,29 @@ export function verifyDimensions(home, canOccupy) {
   for (const [x,z] of [[7.9,3.4],[8.4,.4],[10.5,3.85],[2.4,9.75],[4.6,9.75]]) {
     if (!walls.some(o => o.name === 'Service shaft' && Math.abs(o.x-x)<o.w/2 && Math.abs(o.z-z)<o.d/2)) failures.push(`Missing service shaft at ${x}, ${z}`);
   }
-  const southChairs = home.obstacles.filter(o => o.name === 'Dining chair' && o.z>6.5);
-  const southAisle = 8 - Math.max(...southChairs.map(o => o.z+o.d/2));
-  if (southChairs.length !== 2 || southAisle < .75) failures.push(`Dining south aisle: ${southAisle.toFixed(2)} m; needs at least 0.75 m in this layout`);
-  const northChairs = home.obstacles.filter(o => o.name === 'Dining chair' && o.z<6);
+  const chairs = home.obstacles.filter(o => o.name === 'Dining chair');
+  const eastAisle = 14.2 - Math.max(...chairs.map(o => o.x+o.w/2));
+  if (chairs.length !== 6 || eastAisle < .40) failures.push('Six dining chairs must leave at least 0.40 m along the east window');
   const counter = home.obstacles.find(o => o.name === 'Kitchen counter');
-  const kitchenWorkAisle = Math.min(...northChairs.map(o=>o.z-o.d/2))-(counter.z+counter.d/2);
-  if (northChairs.length!==2 || kitchenWorkAisle<.90) failures.push('The kitchen work aisle needs at least 0.90 m');
   const cornerSofa=home.obstacles.find(o=>o.name==='Sofa'&&o.x>8.25);
-  const endChair=home.obstacles.filter(o=>o.name==='Dining chair').reduce((right,o)=>o.x>right.x?o:right);
-  const diningSofaGap=cornerSofa ? cornerSofa.z-cornerSofa.d/2-(endChair.z+endChair.d/2) : 0;
-  if (diningSofaGap<.45) failures.push('The dining end chair needs at least 0.45 m to the sofa');
+  const kitchenWorkAisle = cornerSofa.z-cornerSofa.d/2-(counter.z+counter.d/2);
+  if (kitchenWorkAisle<.90) failures.push('The kitchen work aisle behind the sofa needs at least 0.90 m');
+  const westChair=chairs.reduce((left,o)=>o.x<left.x?o:left);
+  const diningSofaGap=westChair.x-westChair.w/2-(cornerSofa.x+cornerSofa.w/2);
+  if (diningSofaGap<.45) failures.push('The west dining chairs need at least 0.45 m to the sofa');
   const sofaReturn=home.obstacles.find(o=>o.name==='Sofa return');
   const coffee=home.obstacles.find(o=>o.name==='Coffee table'&&o.x>8.25);
-  const coffeeToMainSofa=cornerSofa.z-cornerSofa.d/2-(coffee.z+coffee.d/2);
-  const coffeeToSofaReturn=sofaReturn.x-sofaReturn.w/2-(coffee.x+coffee.w/2);
-  const diningChairToCoffee=coffee.x-coffee.w/2-(endChair.x+endChair.w/2);
+  const coffeeToMainSofa=coffee.z-coffee.d/2-(cornerSofa.z+cornerSofa.d/2);
+  const coffeeToSofaReturn=coffee.x-coffee.w/2-(sofaReturn.x+sofaReturn.w/2);
+  const diningChairToCoffee=westChair.x-westChair.w/2-(coffee.x+coffee.w/2);
   if (coffeeToMainSofa<.40||coffeeToSofaReturn<.40||diningChairToCoffee<.35) failures.push('The coffee table crowds a sofa wing or dining chair');
-  close(sofaReturn.x+sofaReturn.w/2,cornerSofa.x+cornerSofa.w/2,'Corner sofa outer alignment');
-  close(sofaReturn.z+sofaReturn.d/2,cornerSofa.z-cornerSofa.d/2,'Corner sofa joined seating');
-  if (cornerSofa.w<2.3||sofaReturn.w<.8||sofaReturn.d<1.0) failures.push('The corner sofa needs two full seating wings');
+  close(sofaReturn.x-sofaReturn.w/2,cornerSofa.x-cornerSofa.w/2,'Corner sofa outer alignment');
+  close(sofaReturn.z-sofaReturn.d/2,cornerSofa.z+cornerSofa.d/2,'Corner sofa joined seating');
+  close(cornerSofa.w,2.10,'Corner sofa width');
+  close(cornerSofa.d,.85,'Corner sofa seat depth');
+  close(sofaReturn.w,.85,'Corner sofa return width');
+  close(sofaReturn.d,.80,'Corner sofa return length');
+  close(cornerSofa.d+sofaReturn.d,1.65,'Corner sofa overall depth');
   const coatWardrobe=home.obstacles.find(o=>o.name==='Hall coat wardrobe');
   const coatHallClearance=coatWardrobe ? 8-(coatWardrobe.x+coatWardrobe.w/2) : 0;
   if (coatHallClearance<.85) failures.push('The coat wardrobe must leave at least 0.85 m within the hall');
@@ -79,5 +82,5 @@ export function verifyDimensions(home, canOccupy) {
     if (overlapX>.01 && overlapZ>.01) failures.push(`${f.name} intersects ${wall.name} at ${f.x}, ${f.z}`);
   }
   assert.deepEqual(failures, [], 'Plan dimensions and furniture clearances');
-  return {measurements, diningSouthAisle:southAisle, kitchenWorkAisle, diningSofaGap, coatHallClearance, smallHallClearance, coffeeToMainSofa, coffeeToSofaReturn, diningChairToCoffee};
+  return {measurements, diningEastAisle:eastAisle, kitchenWorkAisle, diningSofaGap, coatHallClearance, smallHallClearance, coffeeToMainSofa, coffeeToSofaReturn, diningChairToCoffee};
 }

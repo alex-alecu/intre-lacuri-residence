@@ -50,16 +50,18 @@ The PDFs do not specify the new furniture sizes. These sizes are design choices.
 | Item | Size or change |
 | --- | --- |
 | Living sofa | 3.15 × 0.96 m visible bounds; sage fabric; moved 0.3625 m east; its right end is at the east edge of the 3.875 m solid rear wall |
-| Dining table | 1.90 × 0.90 m; reduced from 2.80 × 1.10 m for the reference design |
+| Dining table | 1.90 × 0.90 m; turned 90 degrees beside the east window in V1 and V2; moved 0.20 m towards the window |
 | Dining chairs | 0.50 × 0.505 m each; six chairs in the new layout |
-| South dining aisle | 0.78 m with the chairs in their shown positions |
-| Dining corner sofa | 2.45 × 2.00 m overall; joined south and east seating wings, each 0.85 m deep |
-| Kitchen work aisle | 1.01 m from the counter to the north chair backs |
-| Dining chair to sofa | 0.475 m between the movement bounds |
-| Dining coffee table | Oval wood table, 0.50 m east–west × 0.70 m north–south; gaps of 0.43 m and 0.45 m to the sofa wings |
-| Dining sideboard | Reduced to 0.30 m overall depth to keep the rear dining passage clear |
+| East dining aisle | 0.44 m between the movement bounds with the chairs in their shown positions |
+| Dining corner sofa | 2.10 × 1.65 m overall in V1 and V2; joined north and west seating wings, each 0.85 m deep; moved 0.40 m towards the east window |
+| Kitchen work aisle | 0.955 m from the counter to the sofa back |
+| Dining chair to sofa | 0.605 m between the movement bounds |
+| Dining coffee table | 0.50 × 0.50 m; moved 0.40 m with the sofa and rug in V1 and V2 |
+| Dining sideboard | Removed in V1 and V2 with its back panel, vase, and mirror |
 | Hall coat wardrobe | 1.80 m wide × 0.42 m deep; sliding fronts; leaves 0.86 m clear within the hall |
 | Small hall wardrobe | 1.00 m wide × 0.60 m deep × 2.40 m high; sliding fronts; west wall beside the east bathroom; leaves a 1.33 m passage and 0.05 m at each end |
+| Dining TV | Active 16:9 screen with a 1.80 m diagonal; south wall in V1 and V2 |
+| Bedroom desk | 1.20 × 0.68 m beside the west bed in V2 and V3; faces the west window |
 | Living TV | 1.46 × 0.84 m frame; 16:9 screen; low cabinet 2.30 m wide |
 | Living coffee table | Oval wood table, 1.30 × 0.62 m |
 | Living armchairs | Two cream chairs, about 0.86 × 0.855 m each |
@@ -81,7 +83,7 @@ The aisle values apply to the chair positions shown. They do not describe cleara
 
 ## Reference design update
 
-The three supplied room photos guide the furniture, colours, and finishes. The dining room has a six-seat wood table, a woven cabinet, blue glass lights, and a full corner sofa with a coffee table. The west living room has sage and cream seating, an oval wood table, botanical prints, and a fabric pendant. The TV, low cabinet, and stone wall panel are restored on the south wall. One armchair is moved to the east side. The child room uses a house bed, cloud lights, low toy storage, a small reading tent, and cream and pale pink fabric.
+The three supplied room photos guide the furniture, colours, and finishes. The dining room in V1 and V2 has a six-seat wood table beside the east window. The 2.10 × 1.65 m corner sofa has its back towards the kitchen. The brown cabinet beside it is removed. A TV with a 1.80 m screen diagonal is on the south wall. All six chairs can move 0.45 m. The end chairs and the two chairs beside the window sit partly below the table when stored. The west living room has sage and cream seating, an oval wood table, botanical prints, and a fabric pendant. The TV, low cabinet, and stone wall panel are restored on the south wall. One armchair is moved to the east side. The child room uses a house bed, cloud lights, low toy storage, a small reading tent, and cream and pale pink fabric.
 
 All checked walls, columns, shafts, openings, and room dimensions remain in the same positions. Both office desks remain. The library beside the west windows is removed. The living sofa ends at the east edge of its solid rear wall. The lamp at that end is removed. The coat wardrobe stops before the opening between the entry halls. The generated furniture dimensions include local object scale.
 
@@ -96,7 +98,7 @@ All checked walls, columns, shafts, openings, and room dimensions remain in the 
 
 ## Verification
 
-`npm run test:model` checks 18 wall-face dimensions, six column sections, five service shafts, furniture-to-wall and furniture-to-door intersections, 53 furniture mesh groups, and 41 reachable positions. It checks all four balcony openings. It also checks the six dining chairs and both office desks. The movement grid is 0.08 m, with a player radius of 0.19 m.
+`npm run test:model` checks 18 wall-face dimensions, six column sections, five service shafts, furniture-to-wall and furniture-to-door intersections, furniture mesh groups, and 41 reachable positions. It checks all four balcony openings. It also checks the six dining chairs and both office desks. The movement grid is 0.08 m, with a player radius of 0.19 m.
 
 The generated `public/measurements.json` contains the source mapping, differences, corrected dimensions, and furniture inventory. The temporary model report also contains each furniture group's visible bounds. A plan diagram made from the generated geometry was inspected against the PDF plans.
 

@@ -3,6 +3,8 @@ import assert from 'node:assert/strict';
 import {mkdir} from 'node:fs/promises';
 import {measureFurniture} from './measure-furniture.mjs';
 import {verifyFamilyRooms} from './verify-family-rooms.mjs';
+import {verifyBedroomDesk} from './verify-bedroom-desk.mjs';
+import {verifyDiningLayout} from './verify-dining-layout.mjs';
 import {verifyClosedStorage} from './verify-closed-storage.mjs';
 import * as T from 'three';
 
@@ -17,14 +19,18 @@ const suite=buildHome(undefined,'suite');
 const social=buildHome(undefined,'social');
 const clear=(home,x,z,furnished=true)=>canOccupy(x,z,home.obstacles,home.polygons,furnished);
 for(const home of [original,suite,social]){home.root.updateMatrixWorld(true);verifyClosedStorage(home);}
-for(const home of [suite,social])console.log(home.layout,verifyFamilyRooms(home,canOccupy));
+for(const home of [original,suite])console.log(home.layout,verifyDiningLayout(home,canOccupy));
+for(const home of [suite,social]){
+ console.log(home.layout,verifyFamilyRooms(home,canOccupy));
+ console.log(home.layout,verifyBedroomDesk(home,canOccupy));
+}
 
 assert.equal(clear(suite,4.925,5.5,false),false,'The new bedroom wall closes the living room');
 assert.equal(clear(original,4.925,5.5,false),true,'The original living room remains open');
 assert.equal(suite.obstacles.filter(o=>o.name==='Office desk').length,1,'The living office becomes a dressing room');
 assert.equal(original.obstacles.filter(o=>o.name==='Office desk').length,2,'Both original offices remain');
 assert.equal(suite.obstacles.filter(o=>o.name==='Bed').length,2,'The suite keeps two adult beds');
-assert.equal(suite.fixtures.filter(o=>o.name==='Television').length,1,'The gaming room has a TV');
+assert.equal(suite.fixtures.filter(o=>o.name==='Television').length,2,'The gaming and dining rooms have TVs');
 assert.ok(suite.obstacles.some(o=>o.name==='Suite extra dressing'),'The suite has additional dressing storage');
 const partitions=suite.obstacles.filter(o=>o.name==='Suite partition');
 assert.ok(partitions.length>=3,'The enclosure includes its north return and doorway');
